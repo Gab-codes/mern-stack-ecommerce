@@ -51,7 +51,12 @@ function AdminOrderDetailsView({ orderDetails }) {
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-medium">Order Price</p>
-            <Label>${orderDetails?.totalAmount}</Label>
+            <Label>
+            {`₦${new Intl.NumberFormat('en-NG', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          }).format(orderDetails?.totalAmount)}`}
+            </Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-medium">Payment method</p>
@@ -95,7 +100,12 @@ function AdminOrderDetailsView({ orderDetails }) {
                 <TableRow key={item.id}>
                   <TableCell className="py-2" >{item.title}</TableCell>
                   <TableCell className="py-2" >{item.quantity}</TableCell>
-                  <TableCell className="py-2" >${item.price}</TableCell>
+                  <TableCell className="py-2" >
+                  {`₦${new Intl.NumberFormat('en-NG', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                  }).format(item.price)}`}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

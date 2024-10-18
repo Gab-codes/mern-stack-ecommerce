@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
 import { Label } from "../ui/label";
 
-function MenuItems() {
+function MenuItems({ setOpenCartSheet }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,6 +35,9 @@ function MenuItems() {
           new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
         )
       : navigate(getCurrentMenuItem.path);
+
+    // Close the sidebar after navigation
+    setOpenCartSheet(false);
   }
 
   return (
@@ -66,8 +69,6 @@ function HeaderRightContent() {
   useEffect(() => {
     dispatch(fetchCartItems(user?.id));
   }, [dispatch]);
-
-  
 
   return (
     <div className="flex lg:items-center flex-row gap-4">
@@ -122,9 +123,10 @@ function HeaderRightContent() {
 
 function ShoppingHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const [openCartSheet, setOpenCartSheet] = useState(false); // State for sheet
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className="fixed top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/shop/home" className="flex items-center gap-2">
           <HousePlug className="h-6 w-6" />
@@ -134,7 +136,7 @@ function ShoppingHeader() {
           <div className="lg:hidden" >
           <HeaderRightContent />
           </div>
-          <Sheet>
+          <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="lg:hidden">
                 <Menu className="h-6 w-6" />
@@ -142,7 +144,7 @@ function ShoppingHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-full max-w-xs">
-              <MenuItems />
+              <MenuItems setOpenCartSheet={setOpenCartSheet} /> {/* Pass state setter */}
             </SheetContent>
           </Sheet>
         </div>

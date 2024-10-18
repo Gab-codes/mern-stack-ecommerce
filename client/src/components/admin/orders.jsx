@@ -43,7 +43,12 @@ function AdminOrdersView() {
               {orderItem?.orderStatus}
             </Badge>
           </TableCell>
-          <TableCell>${orderItem?.totalAmount ?? "N/A"}</TableCell>
+          <TableCell>
+          {`₦${new Intl.NumberFormat('en-NG', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          }).format(orderItem?.totalAmount ?? "N/A")}`}
+          </TableCell>
           <TableCell>
             <Button onClick={() => handleFetchOrderDetails(orderItem._id)}>
               View Details

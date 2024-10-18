@@ -118,7 +118,7 @@ function ShopCheckout() {
         notes: currentSelectedAddress?.notes,
       },
       orderStatus: "pending",
-      paymentMethod: "cash_on_delivery",
+      paymentMethod: "Cash on delivery",
       paymentStatus: "pending",
       totalAmount: totalCartAmount,
       orderDate: new Date(),
@@ -162,7 +162,10 @@ function ShopCheckout() {
             <div className="flex justify-between">
               <span className="font-bold">Total</span>
               <span className="font-bold">
-                {`₦${totalCartAmount.toFixed(2)}`}
+              {`₦${new Intl.NumberFormat('en-NG', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(totalCartAmount)}`}
               </span>
             </div>
           </div>

@@ -21,6 +21,7 @@ import { useEffect } from 'react';
 import { checkAuth } from './store/auth-slice';
 import { Skeleton } from "@/components/ui/skeleton";
 import PaystackConfirmationPage from './pages/shop/paystack-confirmation';
+import SearchProducts from './pages/shop/search';
 
 
 
@@ -39,9 +40,18 @@ function App() {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
-      {/* Routes Configuration */}
-      <Routes>
 
+      <Routes>
+        <Route path='/' element={ <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+                                    <AuthLayout />
+                                  </CheckAuth>
+                                } 
+        />
+        <Route path='/home' element={ <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+                                        <AuthLayout />
+                                      </CheckAuth>
+                                    } 
+        />
         {/* Auth Routes */}
         <Route path="/auth" element={
           <CheckAuth isAuthenticated={isAuthenticated} user={user}>
@@ -81,7 +91,9 @@ function App() {
           <Route path="listing" element={<ShopListing />} />
           <Route path="checkout" element={<ShopCheckout />} />
           <Route path="account" element={<ShopAccount />} />
+          <Route path="search" element={<SearchProducts />} />
           <Route path="paystack-return" element={ <PaystackConfirmationPage /> } />
+
         </Route>
 
         {/* Catch-all Route */}

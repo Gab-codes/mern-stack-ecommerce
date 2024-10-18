@@ -7,7 +7,7 @@ import { Separator } from "../ui/separator";
 export default function ProductFilter({ filters, handleFilter }) {
   return (
     <div className="bg-background rounded-lg shadow-sm">
-      <div className="p-4 border-b">
+      <div className="px-4 sm:p-4 border-b">
         <h2 className="text-lg font-extrabold">Filters</h2>
       </div>
       <div className="p-4 space-y-4">
@@ -15,9 +15,9 @@ export default function ProductFilter({ filters, handleFilter }) {
           <Fragment key={keyItem.id}> 
             <div>
               <h3 className="text-base font-bold">{keyItem}</h3>
-              <div className="grid gap-2 mt-2">
+              <div className="grid grid-cols-3 md:grid-cols-1 gap-2 mt-2">
                 {filterOptions[keyItem].map((option) => (
-                  <Label className="flex font-medium items-center gap-2" key={option.id}> {/* Added key prop here */}
+                  <Label className="flex font-medium items-center gap-2" key={option.id}> 
                     <Checkbox
                       checked={
                         filters &&
