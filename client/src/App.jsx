@@ -22,7 +22,7 @@ import { checkAuth } from './store/auth-slice';
 import { Skeleton } from "@/components/ui/skeleton";
 import PaystackConfirmationPage from './pages/shop/paystack-confirmation';
 import SearchProducts from './pages/shop/search';
-import SearchProducts from './pages/shop/search';
+
 
 
 
