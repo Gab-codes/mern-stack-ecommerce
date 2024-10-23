@@ -37,17 +37,23 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
               {brandOptionsMap[product?.brand]}
             </span>
           </div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex flex-wrap justify-between items-center mb-2">
             <span
               className={`${
                 product?.salePrice > 0 ? "line-through" : ""
-              } text-lg font-semibold text-primary`}
+              } text-sm sm:text-lg font-semibold text-primary`}
             >
-              ₦{product?.price}
+                {`₦${new Intl.NumberFormat('en-NG', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).format(product?.price)}`}
             </span>
             {product?.salePrice > 0 ? (
-              <span className="text-lg font-semibold text-primary">
-                ₦{product?.salePrice}
+              <span className="text-sm sm:text-lg font-semibold text-primary">
+              {`₦${new Intl.NumberFormat('en-NG', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(product?.salePrice)}`}
               </span>
             ) : null}
           </div>

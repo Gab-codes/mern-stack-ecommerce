@@ -3,9 +3,9 @@ const Product = require("../../models/Product");
 
 const addToCart = async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
+    const { userId, guestId, productId, quantity } = req.body;
 
-    if (!userId || !productId || quantity <= 0) {
+    if ((!userId && !guestId) || !productId || quantity <= 0) {
       return res.status(400).json({
         success: false,
         message: "Invalid data provided!",
@@ -21,10 +21,20 @@ const addToCart = async (req, res) => {
       });
     }
 
-    let cart = await Cart.findOne({ userId });
+    let cart;
 
-    if (!cart) {
-      cart = new Cart({ userId, items: [] });
+    if (userId) {
+      
+      cart = await Cart.findOne({ userId });
+      if (!cart) {
+        cart = new Cart({ userId, items: [] });
+      }
+    } else {
+      
+      cart = await Cart.findOne({ guestId });
+      if (!cart) {
+        cart = new Cart({ guestId, items: [] });
+      }
     }
 
     const findCurrentProductIndex = cart.items.findIndex(
@@ -53,19 +63,32 @@ const addToCart = async (req, res) => {
 
 const fetchCartItems = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params; 
 
-    if (!userId) {
+    
+    if (!id) {
       return res.status(400).json({
         success: false,
-        message: "User id is manadatory!",
+        message: "User id or guest id is mandatory!",
       });
     }
 
-    const cart = await Cart.findOne({ userId }).populate({
-      path: "items.productId",
-      select: "image title price salePrice",
-    });
+    let cart;
+
+    
+    if (id.startsWith('guest_')) {
+      
+      cart = await Cart.findOne({ guestId: id }).populate({
+        path: "items.productId",
+        select: "image title price salePrice",
+      });
+    } else {
+      
+      cart = await Cart.findOne({ userId: id }).populate({
+        path: "items.productId",
+        select: "image title price salePrice",
+      });
+    }
 
     if (!cart) {
       return res.status(404).json({
@@ -74,15 +97,18 @@ const fetchCartItems = async (req, res) => {
       });
     }
 
+    
     const validItems = cart.items.filter(
       (productItem) => productItem.productId
     );
 
+    
     if (validItems.length < cart.items.length) {
       cart.items = validItems;
       await cart.save();
     }
 
+    
     const populateCartItems = validItems.map((item) => ({
       productId: item.productId._id,
       image: item.productId.image,
@@ -108,18 +134,25 @@ const fetchCartItems = async (req, res) => {
   }
 };
 
+
 const updateCartItemQty = async (req, res) => {
   try {
-    const { userId, productId, quantity } = req.body;
+    const { userId, guestId, productId, quantity } = req.body;
 
-    if (!userId || !productId || quantity <= 0) {
+    if ((!userId && !guestId) || !productId || quantity <= 0) {
       return res.status(400).json({
         success: false,
         message: "Invalid data provided!",
       });
     }
 
-    const cart = await Cart.findOne({ userId });
+    let cart;
+    if (userId) {
+      cart = await Cart.findOne({ userId });
+    } else {
+      cart = await Cart.findOne({ guestId });
+    }
+
     if (!cart) {
       return res.status(404).json({
         success: false,
@@ -134,7 +167,7 @@ const updateCartItemQty = async (req, res) => {
     if (findCurrentProductIndex === -1) {
       return res.status(404).json({
         success: false,
-        message: "Cart item not present !",
+        message: "Cart item not present!",
       });
     }
 
@@ -173,18 +206,32 @@ const updateCartItemQty = async (req, res) => {
 
 const deleteCartItem = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
-    if (!userId || !productId) {
+    const { id, productId } = req.params; 
+
+    
+    if (!id || !productId) {
       return res.status(400).json({
         success: false,
         message: "Invalid data provided!",
       });
     }
 
-    const cart = await Cart.findOne({ userId }).populate({
-      path: "items.productId",
-      select: "image title price salePrice",
-    });
+    let cart;
+
+    
+    if (id.startsWith('guest_')) {
+      
+      cart = await Cart.findOne({ guestId: id }).populate({
+        path: "items.productId",
+        select: "image title price salePrice",
+      });
+    } else {
+      
+      cart = await Cart.findOne({ userId: id }).populate({
+        path: "items.productId",
+        select: "image title price salePrice",
+      });
+    }
 
     if (!cart) {
       return res.status(404).json({
@@ -193,12 +240,14 @@ const deleteCartItem = async (req, res) => {
       });
     }
 
+    
     cart.items = cart.items.filter(
       (item) => item.productId._id.toString() !== productId
     );
 
     await cart.save();
 
+    
     await cart.populate({
       path: "items.productId",
       select: "image title price salePrice",

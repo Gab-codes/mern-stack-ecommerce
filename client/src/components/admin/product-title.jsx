@@ -14,10 +14,20 @@ export default function AdminProductTitle({  product, setFormData, setOpenCreate
             </div>
             <CardContent>
                 <h2 className="text-xl font-bold mb-2 mt-2">{product?.title}</h2>
-                <div className="flex justify-between items-center mb-2">
-                    <span className={`${product?.salePrice > 0 ? "line-through" : " "} text-lg font-semibold text-primary`} >N{product.price}</span>
+                <div className="flex flex-wrap justify-between items-center mb-2">
+                    <span className={`${product?.salePrice > 0 ? "line-through" : " "} text-sm sm:text-lg font-semibold text-primary`} >
+                        {`₦${new Intl.NumberFormat('en-NG', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(product?.price)}`}
+                    </span>
                     {product?.salePrice > 0 ? (
-                        <span className="text-lg font-bold">${product?.salePrice}</span>
+                        <span className="text-sm sm:text-lg font-bold">
+                            {`₦${new Intl.NumberFormat('en-NG', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                            }).format(product?.salePrice)}`}
+                        </span>
                         ) : null}
                 </div>
             </CardContent>

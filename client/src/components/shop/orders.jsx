@@ -79,7 +79,12 @@ function ShoppingOrders() {
                       {orderItem?.orderStatus}
                     </Badge>
                   </TableCell>
-                  <TableCell>${orderItem?.totalAmount}</TableCell>
+                  <TableCell>
+                  {`₦${new Intl.NumberFormat('en-NG', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                  }).format(orderItem?.totalAmount)}`}
+                  </TableCell>
                   <TableCell>
                     <Button onClick={() => handleFetchOrderDetails(orderItem?._id)}>
                       View Details
