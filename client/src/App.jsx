@@ -22,6 +22,7 @@ import { checkAuth } from './store/auth-slice';
 import { Skeleton } from "@/components/ui/skeleton";
 import PaystackConfirmationPage from './pages/shop/paystack-confirmation';
 import SearchProducts from './pages/shop/search';
+import SearchProducts from './pages/shop/search';
 
 
 
@@ -40,7 +41,7 @@ function App() {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
-      {/* Routes Configuration */}
+
       <Routes>
         <Route 
           path='/'
@@ -98,7 +99,9 @@ function App() {
           <Route path="checkout" element={<ShopCheckout />} />
           <Route path="account" element={<ShopAccount />} />
           <Route path="search" element={<SearchProducts />} />
+          <Route path="search" element={<SearchProducts />} />
           <Route path="paystack-return" element={ <PaystackConfirmationPage /> } />
+
         </Route>
 
         {/* Catch-all Route */}
