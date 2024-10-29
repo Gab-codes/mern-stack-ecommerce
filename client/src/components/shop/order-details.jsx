@@ -30,8 +30,8 @@ function ShoppingOrderDetailsView({ orderDetails }) {
             <p className="font-medium">Order Price</p>
             <Label>
             {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
           }).format(orderDetails?.totalAmount)}`}
             </Label>
           </div>
@@ -67,8 +67,8 @@ function ShoppingOrderDetailsView({ orderDetails }) {
                     <TableCell className="py-2" >{item.quantity}</TableCell>
                     <TableCell className="py-2" >
                     {`₦${new Intl.NumberFormat('en-NG', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
                     }).format(item.price)}`}
                     </TableCell>
                   </TableRow>

@@ -106,7 +106,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   return (
 <Dialog open={open} onOpenChange={handleDialogClose}>
-  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[95vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
+  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[90vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
     <div className="relative overflow-hidden rounded-lg">
     <img
       src={productDetails?.image}
@@ -132,15 +132,15 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
           }`}
         >
            {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
             }).format(productDetails?.price)}`}
         </p>
         {productDetails?.salePrice > 0 && (
           <p className="text-xl font-bold text-muted-foreground">
            {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
             }).format(productDetails?.salePrice)}`}
           </p>
         )}
@@ -148,7 +148,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
       <div className="flex items-center gap-2 mt-2">
         <div className="flex items-center gap-0.5">
-          <StarRatingComponent rating={averageReview} />
+          <StarRatingComponent rating={averageReview} size="w-3.5 h-3.5 sm:w-5 sm:h-5"/>
         </div>
         <span className="text-muted-foreground">
           ({averageReview.toFixed(1)})
@@ -190,7 +190,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                     <h3 className="font-bold">{reviewItem?.userName}</h3>
                   </div>
                   <div className="flex items-center gap-0.5">
-                    <StarRatingComponent rating={reviewItem?.reviewValue} size="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <StarRatingComponent rating={reviewItem?.reviewValue} />
                   </div>
                   <p className="text-muted-foreground">
                     {reviewItem.reviewMessage}

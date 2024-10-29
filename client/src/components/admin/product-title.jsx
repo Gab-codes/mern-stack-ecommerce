@@ -17,15 +17,15 @@ export default function AdminProductTitle({  product, setFormData, setOpenCreate
                 <div className="flex flex-wrap justify-between items-center mb-2">
                     <span className={`${product?.salePrice > 0 ? "line-through" : " "} text-sm sm:text-lg font-semibold text-primary`} >
                         {`₦${new Intl.NumberFormat('en-NG', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
                         }).format(product?.price)}`}
                     </span>
                     {product?.salePrice > 0 ? (
                         <span className="text-sm sm:text-lg font-bold">
                             {`₦${new Intl.NumberFormat('en-NG', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
                             }).format(product?.salePrice)}`}
                         </span>
                         ) : null}

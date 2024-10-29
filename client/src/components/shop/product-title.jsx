@@ -37,22 +37,22 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
               {productOptionsMap[product?.product]}
             </span>
           </div>
-          <div className="flex gap-1 flex-wrap justify-between items-center mb-2">
+          <div className="flex gap-2 flex-wrap justify-between items-center mb-2">
             <span
               className={`${
                 product?.salePrice > 0 ? "line-through" : ""
-              } text-sm sm:text-lg font-semibold text-primary`}
+              } text-lg sm:text-lg font-semibold text-primary`}
             >
                 {`₦${new Intl.NumberFormat('en-NG', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
                 }).format(product?.price)}`}
             </span>
             {product?.salePrice > 0 ? (
-              <span className="text-sm sm:text-lg font-semibold text-primary">
+              <span className="text-lg sm:text-lg font-semibold text-primary">
               {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
             }).format(product?.salePrice)}`}
               </span>
             ) : null}

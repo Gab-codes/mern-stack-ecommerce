@@ -207,8 +207,8 @@ function ShopCheckout() {
               <span className="font-bold">Total</span>
               <span className="font-bold">
                 {`₦${new Intl.NumberFormat('en-NG', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
                 }).format(totalCartAmount)}`}
               </span>
             </div>

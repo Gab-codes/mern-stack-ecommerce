@@ -45,38 +45,55 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
         <SheetTitle>Your Cart</SheetTitle>
       </SheetHeader>
       <div className="mt-8 space-y-4">
-        {cartItems && cartItems.length > 0
-          ? cartItems.map((item) => (
-              <UserCartItemsContent key={item?.id} cartItem={item} />
-            ))
-          : null}
+        {cartItems && cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <UserCartItemsContent key={item?.id} cartItem={item} />
+          ))
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-muted-foreground">Your cart is empty.</p>
+            <Button
+              onClick={() => {
+                navigate("/shop/listing");
+                setOpenCartSheet(false);
+              }}
+              className="mt-4"
+            >
+              Continue Shopping
+            </Button>
+          </div>
+        )}
       </div>
-      <div className="mt-8 space-y-4">
-        <div className="flex justify-between">
-          <span className="font-bold">Total</span>
-          <span className="font-bold">
-            {`₦${new Intl.NumberFormat("en-NG", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }).format(totalCartAmount)}`}
-          </span>
-        </div>
-      </div>
-      <Button
-        onClick={() => {
-          navigate("/shop/checkout");
-          setOpenCartSheet(false);
-        }}
-        className="w-full mt-6"
-      >
-        Checkout
-      </Button>
-      <Button
-        onClick={handleWhatsAppCheckout}
-        className="w-full mt-6 bg-green-500 hover:bg-green-600"
-      >
-        Checkout on WhatsApp
-      </Button>
+      {cartItems && cartItems.length > 0 && (
+        <>
+          <div className="mt-8 space-y-4">
+            <div className="flex justify-between">
+              <span className="font-bold">Total</span>
+              <span className="font-bold">
+                {`₦${new Intl.NumberFormat("en-NG", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                }).format(totalCartAmount)}`}
+              </span>
+            </div>
+          </div>
+          <Button
+            onClick={() => {
+              navigate("/shop/checkout");
+              setOpenCartSheet(false);
+            }}
+            className="w-full mt-6"
+          >
+            Checkout
+          </Button>
+          <Button
+            onClick={handleWhatsAppCheckout}
+            className="w-full mt-6 bg-green-500 hover:bg-green-600"
+          >
+            Checkout on WhatsApp
+          </Button>
+        </>
+      )}
     </SheetContent>
   );
 }

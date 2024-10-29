@@ -96,8 +96,8 @@ function UserCartItemsContent({ cartItem }) {
         <p className="font-semibold">
         ₦
           {new Intl.NumberFormat('en-NG', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
           }).format(
             (cartItem?.salePrice > 0 ? cartItem?.salePrice : cartItem?.price) * cartItem?.quantity
           )}

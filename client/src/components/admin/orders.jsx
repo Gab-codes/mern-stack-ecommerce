@@ -57,8 +57,8 @@ function AdminOrdersView() {
           </TableCell>
           <TableCell>
             {`₦${new Intl.NumberFormat('en-NG', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
             }).format(orderItem?.totalAmount ?? "N/A")}`}
           </TableCell>
           <TableCell>
