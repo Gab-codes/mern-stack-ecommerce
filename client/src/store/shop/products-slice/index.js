@@ -9,19 +9,20 @@ const initialState = {
 
 export const fetchAllFilteredProducts = createAsyncThunk(
     "products/fetchAllProducts",
-    async ({ filterParams, sortParams }, { rejectWithValue }) => {
+    async ({ filterParams, sortParams, page, limit }, { rejectWithValue }) => {
       try {
         const query = new URLSearchParams({
           ...filterParams,
           sortBy: sortParams,
+          page,
+          limit,
         });
   
         const result = await axios.get(`http://localhost:5000/api/shop/products/get?${query}`);
-        console.log(result.data, "Fetched products data");
         return result.data;
       } catch (error) {
         console.error("Failed to fetch products:", error);
-        return rejectWithValue(error.response.data); // Return the error message
+        return rejectWithValue(error.response.data); 
       }
     }
   );

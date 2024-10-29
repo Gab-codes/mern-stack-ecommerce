@@ -62,22 +62,21 @@ export const addProductFormElements = [
       options: [
         { id: "men", label: "Men" },
         { id: "women", label: "Women" },
-        { id: "kids", label: "Kids" },
-        { id: "accessories", label: "Accessories" },
-        { id: "footwear", label: "Footwear" },
+        { id: "menCombo", label: "Men Combo" },
+        { id: "womenCombo", label: "Women Combo" },
       ],
     },
     {
-      label: "Brand",
-      name: "brand",
+      label: "Product",
+      name: "Product",
       componentType: "select",
       options: [
-        { id: "nike", label: "Nike" },
-        { id: "adidas", label: "Adidas" },
-        { id: "puma", label: "Puma" },
-        { id: "levi", label: "Levi's" },
-        { id: "zara", label: "Zara" },
-        { id: "h&m", label: "H&M" },
+        { id: "wristwatch", label: "Wristwatch" },
+        { id: "sunglasses", label: "Sunglasses" },
+        { id: "perfume", label: "Perfume" },
+        { id: "belts", label: "Belts" },
+        { id: "armpitPurse", label: "Armpit Purse" },
+        { id: "accessories", label: "Accessories" },
       ],
     },
     {
@@ -103,81 +102,85 @@ export const addProductFormElements = [
     },
   ];
   
-  export const shoppingViewHeaderMenuItems = [
-    {
-      id: "home",
-      label: "Home",
-      path: "/shop/home",
-    },
-    {
-      id: "products",
-      label: "Products",
-      path: "/shop/listing",
-    },
-    {
-      id: "men",
-      label: "Men",
-      path: "/shop/listing",
-    },
-    {
-      id: "women",
-      label: "Women",
-      path: "/shop/listing",
-    },
-    {
-      id: "kids",
-      label: "Kids",
-      path: "/shop/listing",
-    },
-    {
-      id: "footwear",
-      label: "Footwear",
-      path: "/shop/listing",
-    },
-    {
-      id: "accessories",
-      label: "Accessories",
-      path: "/shop/listing",
-    },
-    {
-      id: "search",
-      label: "Search",
-      path: "/shop/search",
-    },
-  ];
+export const shoppingViewHeaderMenuItems = [
+  {
+    id: "home",
+    label: "Home",
+    path: "/shop/home",
+  },
+  {
+    id: "products",
+    label: "All Products",
+    path: "/shop/listing",
+  },
+  {
+    id: "sunglasses",
+    label: "Sunglasses",
+    path: "/shop/listing",
+  },
+ {
+    id: "wristwatch",
+    label: "Wristwatch",
+    path: "/shop/listing",
+  },
+  {
+    id: "perfume",
+    label: "Perfume",
+    path: "/shop/listing",
+  },
+  {
+    id: "belts",
+    label: "Belts",
+    path: "/shop/listing",
+  },
+  {
+    id: "armpitPurse",
+    label: "Armpit Purse",
+    path: "/shop/listing",
+  },
+  {
+    id: "accessories",
+    label: "Accessories",
+    path: "/shop/listing",
+  },
+  {
+    id: "search",
+    label: "Search",
+    path: "/shop/search",
+  },
+];
+
   
   export const categoryOptionsMap = {
     men: "Men",
     women: "Women",
-    kids: "Kids",
+    menCombo: "Men Combo",
     accessories: "Accessories",
-    footwear: "Footwear",
   };
   
-  export const brandOptionsMap = {
-    nike: "Nike",
-    adidas: "Adidas",
-    puma: "Puma",
-    levi: "Levi",
-    zara: "Zara",
-    "h&m": "H&M",
+  export const productOptionsMap = {
+         wristwatch : "Wristwatch" ,
+         sunglasses : "Sunglasses" ,
+         perfume : "Perfume" ,
+         belts : "Belts" ,
+         armpitPurse : "Armpit Purse" ,
+         accessories : "Accessories" ,
   };
   
   export const filterOptions = {
     category: [
       { id: "men", label: "Men" },
       { id: "women", label: "Women" },
-      { id: "kids", label: "Kids" },
-      { id: "accessories", label: "Accessories" },
-      { id: "footwear", label: "Footwear" },
+      { id: "menCombo", label: "Men Combo" },
+      { id: "womenCombo", label: "Women Combo" },
     ],
-    brand: [
-      { id: "nike", label: "Nike" },
-      { id: "adidas", label: "Adidas" },
-      { id: "puma", label: "Puma" },
-      { id: "levi", label: "Levi's" },
-      { id: "zara", label: "Zara" },
-      { id: "h&m", label: "H&M" },
+    product: [
+      { id: "sunglasses", label: "Sunglasses" },
+      { id: "wristwatch", label: "Wristwatch" },
+      { id: "perfume", label: "Perfume" },
+      { id: "belts", label: "Belts" },
+      { id: "armpitPurse", label: "Armpit Purse" },
+      { id: "accessories", label: "Accessories" },
     ],
   };
   

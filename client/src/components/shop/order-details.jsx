@@ -7,6 +7,12 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table"
 
 function ShoppingOrderDetailsView({ orderDetails }) {
   const { user } = useSelector((state) => state.auth);
+  const statusClass = {
+    confirmed: "bg-green-400 hover:bg-green-500",
+    delivered: "bg-green-600 hover:bg-green-700",
+    cancelled: "bg-red-600 hover:bg-red-700",
+    processing: "bg-yellow-500 hover:bg-yellow-600",
+  };
 
   return (
     <DialogContent className="sm:max-w-[600px] text-sm max-h-[90vh] overflow-auto ">
@@ -34,21 +40,9 @@ function ShoppingOrderDetailsView({ orderDetails }) {
             <Label>{orderDetails?.paymentMethod}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Payment Status</p>
-            <Label>{orderDetails?.paymentStatus}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
             <p className="font-medium">Order Status</p>
             <Label>
-              <Badge
-                className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
-                    ? "bg-green-500"
-                    : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
-                }`}
-              >
+              <Badge className={`py-1 px-3 ${statusClass[orderDetails?.orderStatus]}`}>
                 {orderDetails?.orderStatus}
               </Badge>
             </Label>
@@ -56,35 +50,35 @@ function ShoppingOrderDetailsView({ orderDetails }) {
         </div>
         <Separator />
         <div>
-        <div className="font-medium">Order Details</div>
-        {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ? (
-          <Table>
-            <TableHeader >
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Quantity</TableCell>
-                <TableCell>Price</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orderDetails.cartItems.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="py-2" >{item.title}</TableCell>
-                  <TableCell className="py-2" >{item.quantity}</TableCell>
-                  <TableCell className="py-2" >
-                  {`₦${new Intl.NumberFormat('en-NG', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                  }).format(item.price)}`}
-                  </TableCell>
+          <div className="font-medium">Order Details</div>
+          {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ? (
+            <Table>
+              <TableHeader >
+                <TableRow>
+                  <TableCell>Title</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Price</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-            ) : (
-              <div>No items in the order.</div>
-            )}
-      </div>
+              </TableHeader>
+              <TableBody>
+                {orderDetails.cartItems.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="py-2" >{item.title}</TableCell>
+                    <TableCell className="py-2" >{item.quantity}</TableCell>
+                    <TableCell className="py-2" >
+                    {`₦${new Intl.NumberFormat('en-NG', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }).format(item.price)}`}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+              ) : (
+                <div>No items in the order.</div>
+              )}
+        </div>
         <div className="grid gap-3">
           <div className="grid gap-2">
             <div className="font-medium">Shipping Info</div>

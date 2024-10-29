@@ -4,16 +4,19 @@ import axios from "axios";
 const initialState = {
   orderList: [],
   orderDetails: null,
+  isLoading: false,
+  totalOrders: 0, 
+  totalPages: 0, 
 };
 
 export const getAllOrdersForAdmin = createAsyncThunk(
   "/order/getAllOrdersForAdmin",
-  async () => {
+  async ({ page, limit }) => {
     const response = await axios.get(
-      `http://localhost:5000/api/admin/orders/get`
+      `http://localhost:5000/api/admin/orders/get?page=${page}&limit=${limit}`
     );
 
-    return response.data;
+    return response.data; 
   }
 );
 
@@ -47,8 +50,6 @@ const adminOrderSlice = createSlice({
   initialState,
   reducers: {
     resetOrderDetails: (state) => {
-      console.log("resetOrderDetails");
-
       state.orderDetails = null;
     },
   },
@@ -59,7 +60,9 @@ const adminOrderSlice = createSlice({
       })
       .addCase(getAllOrdersForAdmin.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.orderList = action.payload.data;
+        state.orderList = action.payload.data; 
+        state.totalOrders = action.payload.totalOrders; 
+        state.totalPages = action.payload.totalPages; 
       })
       .addCase(getAllOrdersForAdmin.rejected, (state) => {
         state.isLoading = false;

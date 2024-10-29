@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommonForm from "../common/form";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersForAdmin, getOrderDetailsForAdmin, updateOrderStatus,} from "@/store/admin/order-slice";
+import { getAllOrdersForAdmin, getOrderDetailsForAdmin, updateOrderStatus } from "@/store/admin/order-slice";
 import { toast } from "react-toastify";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
-
+import { getUserById } from "@/store/find-user-slice"; 
 
 const initialFormData = {
   status: "",
@@ -16,30 +16,49 @@ const initialFormData = {
 
 function AdminOrderDetailsView({ orderDetails }) {
   const [formData, setFormData] = useState(initialFormData);
-  const { user } = useSelector((state) => state.auth);
+  const { user: fetchedUser, loading: userLoading, error: userError } = useSelector((state) => state.user); 
   const dispatch = useDispatch();
 
-  console.log(orderDetails, "orderDetailsorderDetails");
+  const statusClass = {
+    confirmed: "bg-green-400 hover:bg-green-500",
+    delivered: "bg-green-600 hover:bg-green-700",
+    cancelled: "bg-red-600 hover:bg-red-700",
+    processing: "bg-yellow-500 hover:bg-yellow-600",
+  };
 
-  function handleUpdateStatus(event) {
+  useEffect(() => {
+    if (orderDetails?.userId) {
+      dispatch(getUserById(orderDetails.userId)).then((action) => {
+        if (action.error) {
+          toast.error("Failed to load user info");
+        }
+      });
+    }
+  }, [dispatch, orderDetails]);
+
+  const handleUpdateStatus = (event) => {
     event.preventDefault();
     const { status } = formData;
 
-    dispatch(
-      updateOrderStatus({ id: orderDetails?._id, orderStatus: status })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(getOrderDetailsForAdmin(orderDetails?._id));
-        dispatch(getAllOrdersForAdmin());
-        setFormData(initialFormData);
-        toast.success(data?.payload?.message);
-      }
-    });
-  }
+    dispatch(updateOrderStatus({ id: orderDetails?._id, orderStatus: status }))
+      .then((data) => {
+        if (data?.payload?.success) {
+          dispatch(getOrderDetailsForAdmin(orderDetails?._id));
+          const page = JSON.parse(localStorage.getItem('currentPage')) || 1; 
+          const limit = JSON.parse(localStorage.getItem('itemsPerPage')) || 10; 
+
+          dispatch(getAllOrdersForAdmin({ page, limit }));
+          setFormData(initialFormData);
+          toast.success(data?.payload?.message);
+        } else {
+          toast.error(data?.payload?.message || "Failed to update order status");
+        }
+      });
+  };
 
   return (
-    <DialogContent className="sm:max-w-[600px] text-sm max-h-[90vh] overflow-auto">
-      <div className="grid gap-4 ">
+    <DialogContent className="sm:max-w-[600px] text-sm sm:max-h-[95vh] max-h-[90vh] overflow-auto">
+      <div className="grid gap-4">
         <div className="grid">
           <div className="flex mt-5 items-center justify-between">
             <p className="font-medium">Order ID</p>
@@ -52,10 +71,10 @@ function AdminOrderDetailsView({ orderDetails }) {
           <div className="flex mt-2 items-center justify-between">
             <p className="font-medium">Order Price</p>
             <Label>
-            {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-          }).format(orderDetails?.totalAmount)}`}
+              {`₦${new Intl.NumberFormat('en-NG', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(orderDetails?.totalAmount)}`}
             </Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
@@ -63,67 +82,65 @@ function AdminOrderDetailsView({ orderDetails }) {
             <Label>{orderDetails?.paymentMethod}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Payment Status</p>
-            <Label>{orderDetails?.paymentStatus}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
             <p className="font-medium">Order Status</p>
             <Label>
-              <Badge
-                className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed" || orderDetails?.orderStatus === "delivered"
-                    ? "bg-green-500"
-                    : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
-                }`}
-              >
+              <Badge className={`py-1 px-3 ${statusClass[orderDetails?.orderStatus]}`}>
                 {orderDetails?.orderStatus}
               </Badge>
             </Label>
           </div>
         </div>
         <Separator />
-      <div>
-        <div className="font-medium">Order Details</div>
-        {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ? (
-          <Table>
-            <TableHeader >
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Quantity</TableCell>
-                <TableCell>Price</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orderDetails.cartItems.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="py-2" >{item.title}</TableCell>
-                  <TableCell className="py-2" >{item.quantity}</TableCell>
-                  <TableCell className="py-2" >
-                  {`₦${new Intl.NumberFormat('en-NG', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                  }).format(item.price)}`}
-                  </TableCell>
+        <div>
+          <div className="font-medium">Order Details</div>
+          {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableCell>Title</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Price</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-            ) : (
-              <div>No items in the order.</div>
-            )}
-      </div>
+              </TableHeader>
+              <TableBody>
+                {orderDetails.cartItems.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="py-2">{item.title}</TableCell>
+                    <TableCell className="py-2">{item.quantity}</TableCell>
+                    <TableCell className="py-2">
+                      {`₦${new Intl.NumberFormat('en-NG', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(item.price)}`}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div>No items in the order.</div>
+          )}
+        </div>
         <div className="grid gap-2.5">
           <div className="grid gap-2">
             <div className="font-medium">Shipping Info</div>
             <div className="grid gap-0.5 text-muted-foreground">
-              <span>{user.userName}</span>
-              <span >
-                {orderDetails?.addressInfo?.address}, {orderDetails?.addressInfo?.city}, {orderDetails?.addressInfo?.state}
-              </span>
-              <span>{orderDetails?.addressInfo?.phone}</span>
-              <span>{orderDetails?.addressInfo?.notes}</span>
+              {userLoading ? (
+                <span>Loading user info...</span>
+              ) : userError ? (
+                <span>Error loading user info: {userError}</span>
+              ) : (
+                fetchedUser && (
+                  <>
+                    <span>{fetchedUser.userName}</span>
+                    <span>
+                      {orderDetails?.addressInfo?.address}, {orderDetails?.addressInfo?.city}, {orderDetails?.addressInfo?.state}
+                    </span>
+                    <span>{orderDetails?.addressInfo?.phone}</span>
+                    <span>{orderDetails?.addressInfo?.notes}</span>
+                  </>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -136,11 +153,10 @@ function AdminOrderDetailsView({ orderDetails }) {
                 name: "status",
                 componentType: "select",
                 options: [
-                  { id: "pending", label: "Pending" },
-                  { id: "inProcess", label: "In Process" },
-                  { id: "inShipping", label: "In Shipping" },
+                  { id: "processing", label: "Processing" },
+                  { id: "in-transit", label: "In Transit" },
                   { id: "delivered", label: "Delivered" },
-                  { id: "rejected", label: "Rejected" },
+                  { id: "cancelled", label: "Cancelled" },
                 ],
               },
             ]}

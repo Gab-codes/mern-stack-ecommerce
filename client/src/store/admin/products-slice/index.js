@@ -25,9 +25,9 @@ export const addNewProduct = createAsyncThunk(
 
 export const fetchAllProducts = createAsyncThunk(
   "/products/fetchAllProducts",
-  async () => {
+  async ({ page, limit }) => {
     const result = await axios.get(
-      "http://localhost:5000/api/admin/products/get"
+      `http://localhost:5000/api/admin/products/get?page=${page}&limit=${limit}`
     );
 
     return result?.data;

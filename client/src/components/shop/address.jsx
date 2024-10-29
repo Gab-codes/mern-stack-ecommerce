@@ -3,14 +3,11 @@ import CommonForm from "../common/form";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { addressFormControls } from "@/config";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addNewAddress,
-  deleteAddress,
-  editaAddress,
-  fetchAllAddresses,
-} from "@/store/shop/address-slice";
+import {  addNewAddress,  deleteAddress, editaAddress, fetchAllAddresses,} from "@/store/shop/address-slice";
 import AddressCard from "./address-card";
 import { toast } from "react-toastify";
+import { Plus, X } from "lucide-react";
+import { Button } from "../ui/button";
 
 const initialAddressFormData = {
   address: "",
@@ -26,7 +23,11 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { addressList } = useSelector((state) => state.shopAddress);
-
+  const [isFormVisible, setIsFormVisible] = useState(false);  
+  
+  const toggleFormVisibility = () => {
+    setIsFormVisible(!isFormVisible);
+  };
   
   function handleManageAddress(event) {
     event.preventDefault();
@@ -114,6 +115,7 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
     }
   }, [dispatch, user?.id]);
 
+
   return (
     <Card>
       <div className="mb-5 p-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -132,21 +134,37 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
       </div>
 
       <CardHeader>
-        <CardTitle>
-          {currentEditedId !== null ? "Edit Address" : "Add New Address"}
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          <CardTitle>
+            {currentEditedId !== null ? "Edit Address" : "Add New Address"}
+          </CardTitle>
+          {currentEditedId === null && (
+            isFormVisible ? (
+              <Button size="icon" variant="outline" >
+                <X className="h-8 w-8 text-red-600" onClick={toggleFormVisibility} />
+              </Button>
+            ) : (
+              <Button size="icon" variant="outline" className="animate-float" >
+                <Plus className="h-8 w-8" onClick={toggleFormVisibility} />
+              </Button>
+            )
+          )}
+        </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        <CommonForm
-          formControls={addressFormControls}
-          formData={formData}
-          setFormData={setFormData}
-          buttonText={currentEditedId !== null ? "Edit" : "Add"}
-          onSubmit={handleManageAddress}
-          isBtnDisabled={!isFormValid()}
-        />
-      </CardContent>
+      {(currentEditedId !== null || isFormVisible) && (
+        <CardContent className="space-y-3">
+          <CommonForm
+            formControls={addressFormControls}
+            formData={formData}
+            setFormData={setFormData}
+            buttonText={currentEditedId !== null ? "Edit" : "Add"}
+            onSubmit={handleManageAddress}
+            isBtnDisabled={!isFormValid()}
+          />
+        </CardContent>
+      )}
+
     </Card>
   );
 }

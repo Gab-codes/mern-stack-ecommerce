@@ -25,7 +25,7 @@ export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ userId, productId, quantity }, { rejectWithValue }) => {
     try {
-      const guestId = !userId ? getGuestId() : null;  // Get guestId if userId is not provided
+      const guestId = !userId ? getGuestId() : null; 
       const response = await axios.post(
         "http://localhost:5000/api/shop/cart/add",
         {

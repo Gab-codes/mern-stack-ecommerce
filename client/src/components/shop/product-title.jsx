@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
-import { brandOptionsMap, categoryOptionsMap } from "@/config";
+import { productOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
 
 export default function ShoppingProductTitle({ product, handleGetProductDetails, handleAddtoCart,}) {
@@ -34,10 +34,10 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
               {categoryOptionsMap[product?.category]}
             </span>
             <span className="text-[16px] text-muted-foreground">
-              {brandOptionsMap[product?.brand]}
+              {productOptionsMap[product?.product]}
             </span>
           </div>
-          <div className="flex flex-wrap justify-between items-center mb-2">
+          <div className="flex gap-1 flex-wrap justify-between items-center mb-2">
             <span
               className={`${
                 product?.salePrice > 0 ? "line-through" : ""

@@ -9,6 +9,8 @@ import shopOrderSlice from "./shop/order-slice";
 import shopSearchSlice from "./shop/search-slice";
 import shopReviewSlice from "./shop/review-slice";
 import adminOrderSlice from "./admin/order-slice";
+import adminDashboardSlice from "./admin/dashboard-slice"
+import userSlice from "./find-user-slice"
 
 
 
@@ -19,6 +21,7 @@ const store = configureStore({
        
        adminOrder: adminOrderSlice,
        adminProducts: adminProductsSlice,
+       adminDashboard: adminDashboardSlice,
 
        shopProducts: shopProductsSlice,
        shopCart: shopCartSlice,
@@ -27,6 +30,7 @@ const store = configureStore({
        shopOrder: shopOrderSlice,
        shopSearch: shopSearchSlice,
        shopReview: shopReviewSlice,
+       user: userSlice,
     },
 });
 

@@ -3,9 +3,10 @@ import { capturePayment } from "@/store/shop/order-slice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
-export default function PaystackConfirmationPage() {
+export default function OrderConfirmationPage() {
     const dispatch = useDispatch();
     const location = useLocation();
     const params = new URLSearchParams(location.search);
@@ -14,21 +15,24 @@ export default function PaystackConfirmationPage() {
     useEffect(() => {
       if (reference) {
         const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
-  
-        dispatch(capturePayment({ reference, orderId })).then((data) => {
-          if (data?.payload?.success) {
-            sessionStorage.removeItem("currentOrderId");
-            window.location.href = "/shop/account";
-          }
-        });
+    
+        dispatch(capturePayment({ reference, orderId, paymentMethod: "Cash on delivery" }))
+          .then((data) => {
+            if (data?.payload?.success) {
+              sessionStorage.removeItem("currentOrderId");
+              toast.success("Your order has been placed successfully.");
+              window.location.href = "/shop/account"; 
+            }
+          });
       }
     }, [reference, dispatch]);
+    
 
 
     return (
         <Card>
-          <CardHeader>
-            <CardTitle>Processing Payment... Please wait!</CardTitle>
+          <CardHeader className="my-10" >
+            <CardTitle>Processing Order... Please wait!</CardTitle>
           </CardHeader>
         </Card>
       );

@@ -7,6 +7,9 @@ const initialState = {
   orderId: null,
   orderList: [],
   orderDetails: null,
+  totalOrders: 0,
+  totalPages: 1,
+  currentPage: 1,
 };
 
 export const createNewOrder = createAsyncThunk(
@@ -21,16 +24,15 @@ export const createNewOrder = createAsyncThunk(
   }
 );
 
-
-
 export const capturePayment = createAsyncThunk(
   "/order/capturePayment",
-  async ({ reference, orderId }) => {
+  async ({ reference, orderId, paymentMethod }) => {
     const response = await axios.post(
       "http://localhost:5000/api/shop/order/capture",
       {
         reference, 
         orderId,
+        paymentMethod, 
       }
     );
 
@@ -40,9 +42,9 @@ export const capturePayment = createAsyncThunk(
 
 export const getAllOrdersByUserId = createAsyncThunk(
   "/order/getAllOrdersByUserId",
-  async (userId) => {
+  async ({ userId, page, limit }) => {
     const response = await axios.get(
-      `http://localhost:5000/api/shop/order/list/${userId}`
+      `http://localhost:5000/api/shop/order/list/${userId}?page=${page}&limit=${limit}`
     );
 
     return response.data;
@@ -93,6 +95,9 @@ const shoppingOrderSlice = createSlice({
       .addCase(getAllOrdersByUserId.fulfilled, (state, action) => {
         state.isLoading = false;
         state.orderList = action.payload.data;
+        state.totalOrders = action.payload.totalOrders;
+        state.totalPages = action.payload.totalPages;
+        state.currentPage = action.payload.currentPage;
       })
       .addCase(getAllOrdersByUserId.rejected, (state) => {
         state.isLoading = false;

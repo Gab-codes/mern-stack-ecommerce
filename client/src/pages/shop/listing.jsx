@@ -4,20 +4,14 @@ import { useSearchParams } from "react-router-dom";
 import ProductFilter from "@/components/shop/filter";
 import ShoppingProductTitle from "@/components/shop/product-title";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
 import { fetchAllFilteredProducts, fetchProductDetails } from "@/store/shop/products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import ProductDetailsDialog from "@/components/shop/product-details";
 import { toast } from "react-toastify";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
-
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 function buildQueryString(filterParams) {
   const queryParams = Object.entries(filterParams).reduce((acc, [key, value]) => {
@@ -26,7 +20,6 @@ function buildQueryString(filterParams) {
     }
     return acc;
   }, []);
-
   return queryParams.join("&");
 }
 
@@ -39,12 +32,45 @@ function ShoppingListing() {
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("price-lowtohigh");
   const [searchParams, setSearchParams] = useSearchParams();
-  const [openDetailsDialog, setIsDetailsDialogOpen] = useState(false); 
+  const [openDetailsDialog, setIsDetailsDialogOpen] = useState(false);
   const categorySearchParam = searchParams.get("category");
 
+  const [page, setPage] = useState(() => {
+    return localStorage.getItem("listingCurrentPage") ? Number(localStorage.getItem("listingCurrentPage")) : 1;
+  });
+  const limit = 10; 
+  const [totalPages, setTotalPages] = useState(0); 
+
+  const onPageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) { 
+      setPage(newPage);
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem("listingCurrentPage", page);
+  }, [page]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await dispatch(fetchAllFilteredProducts({
+        filterParams: filters,
+        sortParams: sort,
+        page,
+        limit,
+      }));
+      if (response?.payload?.pagination) {
+        setTotalPages(response.payload.pagination.totalPages);
+
+        if (page > response.payload.pagination.totalPages) {
+          setPage(1);
+        }
+      }
+    };
+    fetchProducts();
+  }, [dispatch, sort, filters, page, limit]);
 
   const handleSortChange = (value) => setSort(value);
-
 
   const handleFilterChange = (sectionId, option) => {
     const updatedFilters = { ...filters };
@@ -60,14 +86,13 @@ function ShoppingListing() {
     sessionStorage.setItem("filters", JSON.stringify(updatedFilters));
   };
 
-
   const handleProductDetails = (productId) => {
     dispatch(fetchProductDetails(productId));
   };
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
     let getCartItems = cartItems.items || [];
-  
+
     if (getCartItems.length) {
       const indexOfCurrentItem = getCartItems.findIndex(
         (item) => item.productId === getCurrentProductId
@@ -76,12 +101,11 @@ function ShoppingListing() {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
           toast.error(`Only ${getQuantity} quantity can be added for this item`);
-  
           return;
         }
       }
     }
-  
+
     dispatch(
       addToCart({
         userId: user?.id,
@@ -95,8 +119,6 @@ function ShoppingListing() {
       }
     });
   }
-  
-
 
   useEffect(() => {
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
@@ -109,14 +131,6 @@ function ShoppingListing() {
     }
   }, [filters]);
 
-
-  useEffect(() => {
-    if (filters && sort) {
-      dispatch(fetchAllFilteredProducts({ filterParams: filters, sortParams: sort }));
-    }
-  }, [dispatch, sort, filters]);
-
-
   useEffect(() => {
     if (productDetails) {
       setIsDetailsDialogOpen(true);
@@ -127,7 +141,6 @@ function ShoppingListing() {
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter filters={filters} handleFilter={handleFilterChange} />
 
-
       <div className="bg-background w-full rounded-lg shadow-sm">
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-lg font-extrabold">All Products</h2>
@@ -135,7 +148,6 @@ function ShoppingListing() {
             <span className="text-muted-foreground">
               {productList?.length || 0} Products
             </span>
-            {/* Sorting dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center gap-1">
@@ -155,24 +167,57 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
-        
-        {/* Products grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
           {productList?.length > 0
             ? productList.map((product) => (
-                <ShoppingProductTitle
-                  key={product.id}
-                  product={product}
-                  handleGetProductDetails={handleProductDetails}
-                  handleAddtoCart={handleAddtoCart}
-                />
-              ))
+              <ShoppingProductTitle
+                key={product._id}
+                product={product}
+                handleGetProductDetails={handleProductDetails}
+                handleAddtoCart={handleAddtoCart}
+              />
+            ))
             : <p>No products available.</p>}
         </div>
+        {productList?.length > 0 ?
+          <Pagination className="flex flex-col justify-center items-center my-8 " >
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() => onPageChange(page > 1 ? page - 1 : page)}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    href="#"
+                    isActive={index + 1 === page}
+                    onClick={() => onPageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() => onPageChange(page < totalPages ? page + 1 : page)}
+                />
+              </PaginationItem>
+            </PaginationContent>
+            <div className="flex items-center justify-center mt-2">
+              <span className="text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+            </div>
+          </Pagination>
+          : ""
+        }
       </div>
 
       <ProductDetailsDialog open={openDetailsDialog} setOpen={setIsDetailsDialogOpen} productDetails={productDetails} />
-
     </div>
   );
 }

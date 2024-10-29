@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const authRouter = require("./routes/auth/auth-routes");
+const usersRouter = require("./routes/find-user/find-user-routes");
 const adminProductsRouter = require("./routes/admin/products-routes");
 const adminOrderRoute = require("./routes/admin/order-routes");
 const commonFeatureRouter = require("./routes/common/feature-routes");
@@ -13,6 +14,7 @@ const ShopAddresstRouter = require("./routes/shop/address-routes");
 const shopOrderRouter = require("./routes/shop/order-routes");
 const shopSearchRouter = require("./routes/shop/search-routes");
 const shopReviewRouter = require("./routes/shop/review-routes");
+const adminAdashboardRouter = require("./routes/admin/dashboard-routes")
 
 //create a database connection.
 mongoose.connect(
@@ -41,8 +43,12 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
+app.use("/api/users", usersRouter);
+
+
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/admin/orders", adminOrderRoute);
+app.use("/api/admin/dashboard", adminAdashboardRouter);
 
 app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", shopcartRouter);

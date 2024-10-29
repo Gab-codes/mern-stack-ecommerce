@@ -1,4 +1,4 @@
-import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
+import { HousePlug, LogOut, Menu, ShoppingCart, User, UserCog } from "lucide-react";
 import { Link, useLocation, useNavigate, useSearchParams,} from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
@@ -24,9 +24,14 @@ function MenuItems({ setOpenCartSheet }) {
       getCurrentMenuItem.id !== "products" &&
       getCurrentMenuItem.id !== "search"
         ? {
-            category: [getCurrentMenuItem.id],
+            product: [getCurrentMenuItem.id],
           }
         : null;
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
 
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
 
@@ -35,10 +40,10 @@ function MenuItems({ setOpenCartSheet }) {
           new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
         )
       : navigate(getCurrentMenuItem.path);
-
-    // Close the sidebar after navigation
     setOpenCartSheet(false);
+
   }
+
 
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
@@ -56,7 +61,7 @@ function MenuItems({ setOpenCartSheet }) {
 }
 
 function HeaderRightContent() {
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
@@ -69,6 +74,14 @@ function HeaderRightContent() {
   useEffect(() => {
     dispatch(fetchCartItems(user?.id));
   }, [dispatch]);
+
+  function HandleAccount(){
+    navigate("/shop/account")
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <div className="flex lg:items-center flex-row gap-4">
@@ -94,7 +107,7 @@ function HeaderRightContent() {
           }
         />
       </Sheet>
-
+    {isAuthenticated ? (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black">
@@ -106,7 +119,7 @@ function HeaderRightContent() {
         <DropdownMenuContent side="right" className="w-56">
           <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => navigate("/shop/account")}>
+          <DropdownMenuItem onClick={HandleAccount}>
             <UserCog className="mr-2 h-4 w-4" />
             Account
           </DropdownMenuItem>
@@ -117,6 +130,17 @@ function HeaderRightContent() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+    ) : (
+        <>
+          <Button onClick={() => navigate("/auth/login")} className="hidden sm:block" >
+            <span>Sign In</span>
+          </Button>
+          <button onClick={() => navigate("/auth/login")} className="mr-2 cursor-pointer sm:hidden">
+            <User className="w-6 h-6" />
+          </button>
+        </>
+    )}
+
     </div>
   );
 }
@@ -144,7 +168,7 @@ function ShoppingHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-full max-w-xs">
-              <MenuItems setOpenCartSheet={setOpenCartSheet} /> {/* Pass state setter */}
+              <MenuItems setOpenCartSheet={setOpenCartSheet} />
             </SheetContent>
           </Sheet>
         </div>

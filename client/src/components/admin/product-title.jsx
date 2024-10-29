@@ -9,7 +9,7 @@ export default function AdminProductTitle({  product, setFormData, setOpenCreate
                 <img 
                     src={product?.image}
                     alt={product?.title}
-                    className="w-full h-[230px] object-cover rounded-t-lg"
+                    className="w-full h-200px object-cover rounded-t-lg"
                 />
             </div>
             <CardContent>

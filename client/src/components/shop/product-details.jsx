@@ -97,7 +97,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     if (productDetails !== null) dispatch(getReviews(productDetails?._id));
   }, [productDetails]);
 
-  console.log(reviews, "reviews");
 
   const averageReview =
     reviews && reviews.length > 0
@@ -107,28 +106,28 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   return (
 <Dialog open={open} onOpenChange={handleDialogClose}>
-  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[90vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
+  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[95vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
     <div className="relative overflow-hidden rounded-lg">
-      <img
-        src={productDetails?.image}
-        alt={productDetails?.title}
-        width={600}
-        height={600}
-        className="aspect-square w-full object-cover"
-      />
+    <img
+      src={productDetails?.image}
+      alt={productDetails?.title}
+      width={600}
+      height={600}
+      className="aspect-square w-full max-w-[350px] max-h-[350px] md:max-w-[600px] md:max-h-[600px] object-cover"
+    />
     </div>
 
     <div>
       <div>
-        <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
-        <p className="text-muted-foreground text-2xl mb-2 mt-2">
+        <h1 className="text-2xl font-extrabold">{productDetails?.title}</h1>
+        <p className="text-muted-foreground text-lg mb-2 mt-2">
           {productDetails?.description}
         </p>
       </div>
 
       <div className="flex items-center justify-between">
         <p
-          className={`text-2xl font-bold text-primary ${
+          className={`text-xl font-bold text-primary ${
             productDetails?.salePrice > 0 ? "line-through" : ""
           }`}
         >

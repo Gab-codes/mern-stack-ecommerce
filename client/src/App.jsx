@@ -20,8 +20,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { checkAuth } from './store/auth-slice';
 import { Skeleton } from "@/components/ui/skeleton";
-import PaystackConfirmationPage from './pages/shop/paystack-confirmation';
 import SearchProducts from './pages/shop/search';
+import OrderConfirmationPage from './pages/shop/order-confirmation';
 
 
 
@@ -40,7 +40,7 @@ function App() {
 
 
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
+    <div className="flex flex-col overflow-auto bg-white">
 
       <Routes>
         <Route 
@@ -100,7 +100,7 @@ function App() {
           <Route path="account" element={<ShopAccount />} />
           <Route path="search" element={<SearchProducts />} />
           <Route path="search" element={<SearchProducts />} />
-          <Route path="paystack-return" element={ <PaystackConfirmationPage /> } />
+          <Route path="order-return" element={ <OrderConfirmationPage /> } />
 
         </Route>
 

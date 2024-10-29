@@ -1,6 +1,6 @@
 import { ChartNoAxesCombined } from "lucide-react";
 import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BadgeCheck, LayoutDashboard, ShoppingBasket } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 
@@ -27,24 +27,34 @@ export const adminSidebarMenuItems = [
 
 function MenuItems({setOpen}){
     const navigate = useNavigate();
+    const location = useLocation();
 
-    return <nav className="mt-8 flex flex-col gap-2" >
-        {
-            adminSidebarMenuItems.map( menuItem => 
-                <div key={menuItem.id} 
-                onClick={()=> {
-                    navigate(menuItem.path)
-                    setOpen ? setOpen(false) : null
-                }} 
-                className="flex cursor-pointer text-xl items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground" >
-                    {menuItem.icon}
-                    <span>{menuItem.label}</span>
-
-                </div>
-            )
-        }
-    </nav>
-}
+    return (
+        <nav className="mt-8 flex flex-col gap-2">
+          {adminSidebarMenuItems.map((menuItem) => {
+            const isActive = location.pathname === menuItem.path;
+    
+            return (
+              <div
+                key={menuItem.id}
+                onClick={() => {
+                  navigate(menuItem.path);
+                  if (setOpen) setOpen(false);
+                }}
+                className={`flex cursor-pointer text-xl items-center gap-2 rounded-md px-3 py-2 ${
+                  isActive
+                    ? "bg-muted text-foreground" 
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                {menuItem.icon}
+                <span>{menuItem.label}</span>
+              </div>
+            );
+          })}
+        </nav>
+      );
+    }
 
 function AdminSidebar({ open, setOpen }) {
 

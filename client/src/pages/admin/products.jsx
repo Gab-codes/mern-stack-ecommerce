@@ -8,14 +8,14 @@ import { addNewProduct, deleteProduct, editProduct, fetchAllProducts } from "@/s
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const initialFormData = {
   image: null,
   title: "",
   description: "",
   category: "",
-  brand: "",
+  product: "",
   price: "",
   salePrice: "",
   totalStock: "",
@@ -23,42 +23,40 @@ const initialFormData = {
 };
 
 function AdminProducts() {
-  
   const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
-  const [currentEditedId, setCurrentEditedId] = useState(null); 
-
+  const [currentEditedId, setCurrentEditedId] = useState(null);
+  
+  const [page, setPage] = useState(() => {
+    return localStorage.getItem("adminProductCurrentPage") ? Number(localStorage.getItem("adminProductCurrentPage")) : 1;
+  });
+  const limit = 10;
+  const [totalPages, setTotalPages] = useState(0);
   
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
 
-  
   function onSubmit(event) {
     event.preventDefault();
-
     if (currentEditedId !== null) {
-      
       dispatch(editProduct({ id: currentEditedId, formData }))
         .then((data) => handleAfterSubmit(data, "edit"));
     } else {
-      
       dispatch(addNewProduct({ ...formData, image: uploadedImageUrl }))
         .then((data) => handleAfterSubmit(data, "add"));
     }
   }
 
-  
   function handleAfterSubmit(data, action) {
     if (data?.payload?.success) {
-      dispatch(fetchAllProducts()); 
-      setFormData(initialFormData); 
-      setOpenCreateProductsDialog(false); 
-      setCurrentEditedId(null); 
+      dispatch(fetchAllProducts({ page, limit }));
+      setFormData(initialFormData);
+      setOpenCreateProductsDialog(false);
+      setCurrentEditedId(null);
 
-      
       const message = action === "add" ? "Product added successfully" : "Product updated successfully";
       toast.success(message);
     } else {
@@ -66,11 +64,10 @@ function AdminProducts() {
     }
   }
 
-  
   function handleDelete(productId) {
     dispatch(deleteProduct(productId)).then((data) => {
       if (data?.payload?.success) {
-        dispatch(fetchAllProducts());
+        dispatch(fetchAllProducts({ page, limit }));
         toast.success("Product deleted successfully.");
       } else {
         toast.error("Failed to delete the product.");
@@ -78,33 +75,42 @@ function AdminProducts() {
     });
   }
 
-  
+    useEffect(() => {
+    localStorage.setItem("adminProductCurrentPage", page);
+  }, [page]);
+
+  function onPageChange(newPage) {
+    if (newPage > 0 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  }
+
+  useEffect(() => {
+    dispatch(fetchAllProducts({ page, limit })).then((data) => {
+      if (data?.payload?.pagination) {
+        setTotalPages(data.payload.pagination.totalPages);
+      }
+    });
+  }, [dispatch, page, limit]);
+
   function isFormValid() {
     return Object.keys(formData)
       .filter((key) => key !== "averageReview" && key !== "salePrice") 
-      .every((key) => formData[key] !== ""); 
+      .every((key) => formData[key] !== "");
   }
-
-  
-  useEffect(() => {
-    dispatch(fetchAllProducts());
-  }, [dispatch]);
 
   return (
     <Fragment>
-
-
       <div className="mb-5 w-full flex justify-end">
         <Button onClick={() => setOpenCreateProductsDialog(true)}>Add New Product</Button>
       </div>
-
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {productList && productList.length > 0 ? (
           productList.map((productItem) => (
             <AdminProductTile
-              key={productItem.id}
               setFormData={setFormData}
+              key={productItem.id}
               setOpenCreateProductsDialog={setOpenCreateProductsDialog}
               setCurrentEditedId={setCurrentEditedId}
               product={productItem}
@@ -116,13 +122,45 @@ function AdminProducts() {
         )}
       </div>
 
+      <Pagination className="flex flex-col justify-center items-center mt-6 mb-10" >
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={() => onPageChange(page - 1)}
+            />
+          </PaginationItem>
+          {[...Array(totalPages)].map((_, index) => (
+            <PaginationItem key={index}>
+              <PaginationLink
+                href="#"
+                isActive={index + 1 === page}
+                onClick={() => onPageChange(index + 1)}
+              >
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={() => onPageChange(page + 1)}
+            />
+          </PaginationItem>
+        </PaginationContent>
+        <div className="flex items-center justify-center mt-2">
+            <span className="text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+          </div>
+      </Pagination>
 
       <Sheet
         open={openCreateProductsDialog}
         onOpenChange={() => {
           setOpenCreateProductsDialog(false);
-          setCurrentEditedId(null); 
-          setFormData(initialFormData); 
+          setCurrentEditedId(null);
+          setFormData(initialFormData);
         }}
       >
         <SheetContent side="right" className="overflow-auto">
@@ -132,7 +170,6 @@ function AdminProducts() {
             </SheetTitle>
           </SheetHeader>
 
-    
           <ProductImageUpload
             imageFile={imageFile}
             setImageFile={setImageFile}
@@ -143,7 +180,6 @@ function AdminProducts() {
             isEditMode={currentEditedId !== null}
           />
 
-    
           <div className="py-6">
             <CommonForm
               onSubmit={onSubmit}
