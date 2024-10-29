@@ -6,7 +6,7 @@ export const getUserById = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       axios.defaults.withCredentials = true;
-      const response = await axios.get(`http://localhost:5000/api/users/user/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/user/${userId}`);
       return response.data; 
     } catch (error) {
       return rejectWithValue(error.response.data); 

@@ -41,7 +41,7 @@ const createOrder = async (req, res) => {
         email, 
         amount: amountInKobo, 
         currency: "NGN", 
-        callback_url: "http://localhost:5173/shop/order-return", 
+        callback_url: `${process.env.CLIENT_BASE_URL}/shop/order-return`, 
       };
     
 

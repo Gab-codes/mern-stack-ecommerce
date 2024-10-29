@@ -5,7 +5,7 @@ const axios = require("axios");
 const paystack = axios.create({
   baseURL: "https://api.paystack.co",
   headers: {
-    Authorization: "Bearer sk_test_f5264db1ae744e6f4d96e19bc72a8abd8a079b3e",
+    Authorization: process.env.PAYSTACK_AUTHORIZATION,
     "Content-Type": "application/json",
   },
 });
