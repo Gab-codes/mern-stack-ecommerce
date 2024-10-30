@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import axios from "axios";
 import { Skeleton } from "../ui/skeleton";
+import { toast } from "react-toastify";
 
 function ProductImageUpload({
   imageFile,
@@ -18,10 +19,8 @@ function ProductImageUpload({
 }) {
   const inputRef = useRef(null);
 
-
   function handleImageFileChange(event) {
     const selectedFile = event.target.files?.[0];
-
     if (selectedFile) setImageFile(selectedFile);
   }
 
@@ -43,28 +42,34 @@ function ProductImageUpload({
   }
 
   async function uploadImageToCloudinary() {
-    setImageLoadingState(true);
-    const data = new FormData();
-    data.append("my_file", imageFile);
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/admin/products/upload-image`,
-      data
-    );
+    try {
+      setImageLoadingState(true);
+      const data = new FormData();
+      data.append("my_file", imageFile);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/admin/products/upload-image`,
+        data
+      );
 
-    if (response?.data?.success) {
-      setUploadedImageUrl(response.data.result.url);
+      if (response?.data?.success) {
+        setUploadedImageUrl(response.data.result.url);
+      }
+    } catch (error) {
+      toast.error("Error uploading image:", error);
+      
+    } finally {
       setImageLoadingState(false);
     }
   }
 
   useEffect(() => {
-    if (imageFile !== null) uploadImageToCloudinary();
+    if (imageFile) {
+      uploadImageToCloudinary();
+    }
   }, [imageFile]);
 
   return (
-    <div
-      className={`w-full  mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}
-    >
+    <div className={`w-full mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
       <Label className="text-lg font-semibold mb-2 block">Upload Image</Label>
       <div
         onDragOver={handleDragOver}
@@ -80,6 +85,7 @@ function ProductImageUpload({
           ref={inputRef}
           onChange={handleImageFileChange}
           disabled={isEditMode}
+          aria-disabled={isEditMode}
         />
         {!imageFile ? (
           <Label
@@ -88,25 +94,28 @@ function ProductImageUpload({
               isEditMode ? "cursor-not-allowed" : ""
             } flex flex-col items-center justify-center h-32 cursor-pointer`}
           >
-            <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
+            <UploadCloudIcon
+              className="w-10 h-10 text-muted-foreground mb-2"
+              aria-hidden="true"
+            />
             <span>Drag & drop or click to upload image</span>
           </Label>
         ) : imageLoadingState ? (
-          <Skeleton className="h-10 bg-gray-100" />
+          <Skeleton className="h-10 bg-gray-100 animate-pulse" aria-busy="true" />
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <FileIcon className="w-8 text-primary mr-2 h-8" />
+              <FileIcon className="w-8 text-primary mr-2 h-8" aria-hidden="true" />
+              <p className="text-sm font-medium">{imageFile.name}</p>
             </div>
-            <p className="text-sm font-medium">{imageFile.name}</p>
             <Button
               variant="ghost"
               size="icon"
               className="text-muted-foreground hover:text-foreground"
               onClick={handleRemoveImage}
+              aria-label="Remove Image"
             >
               <XIcon className="w-4 h-4" />
-              <span className="sr-only">Remove File</span>
             </Button>
           </div>
         )}

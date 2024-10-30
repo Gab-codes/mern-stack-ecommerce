@@ -56,6 +56,8 @@ function AdminProducts() {
       setFormData(initialFormData);
       setOpenCreateProductsDialog(false);
       setCurrentEditedId(null);
+        setImageFile(null);
+  setUploadedImageUrl(null);
 
       const message = action === "add" ? "Product added successfully" : "Product updated successfully";
       toast.success(message);
@@ -121,39 +123,41 @@ function AdminProducts() {
           <p>No products available.</p>
         )}
       </div>
-
-      <Pagination className="flex flex-col justify-center items-center mt-6 mb-10" >
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={() => onPageChange(page - 1)}
-            />
-          </PaginationItem>
-          {[...Array(totalPages)].map((_, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink
+      { productList && productList.length > 0 ? 
+        <Pagination className="flex flex-col justify-center items-center mt-6 mb-10" >
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
                 href="#"
-                isActive={index + 1 === page}
-                onClick={() => onPageChange(index + 1)}
-              >
-                {index + 1}
-              </PaginationLink>
+                onClick={() => onPageChange(page - 1)}
+              />
             </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={() => onPageChange(page + 1)}
-            />
-          </PaginationItem>
-        </PaginationContent>
-        <div className="flex items-center justify-center mt-2">
-            <span className="text-muted-foreground">
-              Page {page} of {totalPages}
-            </span>
-          </div>
-      </Pagination>
+            {[...Array(totalPages)].map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={index + 1 === page}
+                  onClick={() => onPageChange(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() => onPageChange(page + 1)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+          <div className="flex items-center justify-center mt-2">
+              <span className="text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+            </div>
+        </Pagination>
+        : " "
+      }
 
       <Sheet
         open={openCreateProductsDialog}

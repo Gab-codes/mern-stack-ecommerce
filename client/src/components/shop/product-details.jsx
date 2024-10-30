@@ -106,14 +106,14 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   return (
 <Dialog open={open} onOpenChange={handleDialogClose}>
-  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[90vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
+  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[80vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
     <div className="relative overflow-hidden rounded-lg">
     <img
       src={productDetails?.image}
       alt={productDetails?.title}
       width={600}
       height={600}
-      className="aspect-square w-full max-w-[350px] max-h-[350px] md:max-w-[600px] md:max-h-[600px] object-cover"
+      className="aspect-square w-full max-w-[350px] max-h-[300px] md:max-w-[600px] md:max-h-[600px] object-cover"
     />
     </div>
 

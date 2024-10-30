@@ -87,7 +87,7 @@ function HeaderRightContent() {
   };
 
   return (
-    <div className="flex lg:items-center flex-row gap-4">
+    <div className="flex lg:items-center flex-row gap:3 sm:gap-4">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button
           onClick={() => setOpenCartSheet(true)}
@@ -138,7 +138,7 @@ function HeaderRightContent() {
           <Button onClick={() => navigate("/auth/login")} className="hidden sm:block" >
             <span>Sign In</span>
           </Button>
-          <button onClick={() => navigate("/auth/login")} className="mr-2 cursor-pointer sm:hidden">
+          <button onClick={() => navigate("/auth/login")} className=" cursor-pointer sm:hidden">
             <User className="w-6 h-6" />
           </button>
         </>

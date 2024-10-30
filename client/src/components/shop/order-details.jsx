@@ -15,7 +15,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
   };
 
   return (
-    <DialogContent className="sm:max-w-[600px] text-sm max-h-[90vh] overflow-auto ">
+    <DialogContent className="sm:max-w-[600px] text-base max-h-[80vh] sm:max-h-[90vh]  overflow-auto ">
       <div className="grid gap-3.5">
         <div className="grid gap-2">
           <div className="flex mt-6 items-center justify-between">

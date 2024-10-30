@@ -68,7 +68,7 @@ export const addProductFormElements = [
     },
     {
       label: "Product",
-      name: "Product",
+      name: "product",
       componentType: "select",
       options: [
         { id: "wristwatch", label: "Wristwatch" },
