@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function AdminDashboard() {
-  const [imageFiles, setImageFiles] = useState([]); // Corrected to use setImageFiles
-  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); // Update to an array
+  const [imageFiles, setImageFiles] = useState([]); 
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); 
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const dispatch = useDispatch();
   const { featureImageList, loadingFeatureImages } = useSelector((state) => state.commonFeature);
@@ -21,7 +21,7 @@ function AdminDashboard() {
   }, [dispatch]);
 
   function handleUploadFeatureImage() {
-    // Upload each image URL
+    
     uploadedImageUrls.forEach((url) => {
       dispatch(addFeatureImage(url)).then((data) => {
         if (data?.payload?.success) {
@@ -29,7 +29,7 @@ function AdminDashboard() {
         }
       });
     });
-    // Reset the image state
+    
     setImageFiles([]);
     setUploadedImageUrls([]);
   }
@@ -79,7 +79,7 @@ function AdminDashboard() {
           <>
             <ProductImageUpload
               imageFiles={imageFiles}
-              setImageFiles={setImageFiles} // Corrected here
+              setImageFiles={setImageFiles} 
               uploadedImageUrls={uploadedImageUrls}
               setUploadedImageUrls={setUploadedImageUrls}
               setImageLoadingState={setImageLoadingState}
