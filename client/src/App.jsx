@@ -37,7 +37,33 @@ function App() {
     dispatch(checkAuth(token));
   }, [dispatch]);
 
-  if(isLoading) return <Skeleton className="w-[600px] h-[600px] " />
+  if (isLoading) {
+    return (
+      <div className="space-y-6 p-8">
+        
+        <div className="space-y-4">
+          <Skeleton className="w-full h-[400px] rounded-lg" /> 
+          <Skeleton className="w-3/4 h-8" /> 
+          <Skeleton className="w-1/2 h-6" /> 
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="space-y-3">
+              <Skeleton className="w-full h-[200px] rounded-lg" /> 
+              <Skeleton className="w-3/4 h-5" /> 
+              <Skeleton className="w-1/2 h-4" /> 
+            </div>
+          ))}
+        </div>
+        
+        <div className="space-y-2 mt-8">
+          <Skeleton className="w-1/2 h-4" /> 
+          <Skeleton className="w-1/3 h-4" /> 
+        </div>
+      </div>
+    );
+  }
 
 
   return (
