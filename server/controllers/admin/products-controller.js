@@ -1,30 +1,40 @@
+
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
 
 const handleImageUpload = async (req, res) => {
   try {
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    const url = "data:" + req.file.mimetype + ";base64," + b64;
-    const result = await imageUploadUtil(url);
+    // Map over the files and upload each one to Cloudinary
+    const uploadPromises = req.files.map(async (file) => {
+      const b64 = Buffer.from(file.buffer).toString("base64");
+      const url = "data:" + file.mimetype + ";base64," + b64;
+      const result = await imageUploadUtil(url); // Save image
+      return result.secure_url; // Store Cloudinary URL
+    });
 
+    // Wait for all uploads to complete
+    const urls = await Promise.all(uploadPromises);
+
+    // Return all URLs in response
     res.json({
       success: true,
-      result,
+      urls,
     });
   } catch (error) {
-    console.log(error);
-    res.json({
+    console.error("Error uploading images:", error);
+    res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred during image upload.",
     });
   }
 };
 
-//add a new product
+
+
 const addProduct = async (req, res) => {
   try {
     const {
-      image,
+      images,
       title,
       description,
       category,
@@ -34,9 +44,8 @@ const addProduct = async (req, res) => {
       totalStock,
     } = req.body;
 
-
     const newlyCreatedProduct = new Product({
-      image,
+      images,
       title,
       description,
       category,
@@ -55,12 +64,11 @@ const addProduct = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred",
     });
   }
 };
 
-//fetch all products
 
 const fetchAllProducts = async (req, res) => {
   try {
@@ -89,12 +97,12 @@ const fetchAllProducts = async (req, res) => {
   }
 };
 
-//edit a product
+
 const editProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      image,
+      images,
       title,
       description,
       category,
@@ -111,6 +119,7 @@ const editProduct = async (req, res) => {
         message: "Product not found",
       });
 
+    
     findProduct.title = title || findProduct.title;
     findProduct.description = description || findProduct.description;
     findProduct.category = category || findProduct.category;
@@ -119,7 +128,7 @@ const editProduct = async (req, res) => {
     findProduct.salePrice =
       salePrice === "" ? 0 : salePrice || findProduct.salePrice;
     findProduct.totalStock = totalStock || findProduct.totalStock;
-    findProduct.image = image || findProduct.image;
+    findProduct.images = images || findProduct.images; 
 
     await findProduct.save();
     res.status(200).json({
@@ -130,12 +139,12 @@ const editProduct = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred",
     });
   }
 };
 
-//delete a product
+
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -149,13 +158,13 @@ const deleteProduct = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Product delete successfully",
+      message: "Product deleted successfully",
     });
   } catch (e) {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred",
     });
   }
 };

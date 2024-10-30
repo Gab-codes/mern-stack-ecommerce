@@ -1,3 +1,5 @@
+
+
 import ProductImageUpload from "@/components/admin/image-upload";
 import AdminProductTile from "@/components/admin/product-title";
 import CommonForm from "@/components/common/form";
@@ -11,7 +13,7 @@ import { toast } from "react-toastify";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const initialFormData = {
-  image: null,
+  images: [], 
   title: "",
   description: "",
   category: "",
@@ -25,8 +27,8 @@ const initialFormData = {
 function AdminProducts() {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
-  const [imageFile, setImageFile] = useState(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [imageFiles, setImageFiles] = useState([]); 
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); 
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const [currentEditedId, setCurrentEditedId] = useState(null);
   
@@ -41,11 +43,14 @@ function AdminProducts() {
 
   function onSubmit(event) {
     event.preventDefault();
+    const imagesToSubmit = uploadedImageUrls; 
+    const submissionData = { ...formData, images: imagesToSubmit }; 
+
     if (currentEditedId !== null) {
-      dispatch(editProduct({ id: currentEditedId, formData }))
+      dispatch(editProduct({ id: currentEditedId, formData: submissionData }))
         .then((data) => handleAfterSubmit(data, "edit"));
     } else {
-      dispatch(addNewProduct({ ...formData, image: uploadedImageUrl }))
+      dispatch(addNewProduct(submissionData))
         .then((data) => handleAfterSubmit(data, "add"));
     }
   }
@@ -56,8 +61,8 @@ function AdminProducts() {
       setFormData(initialFormData);
       setOpenCreateProductsDialog(false);
       setCurrentEditedId(null);
-        setImageFile(null);
-  setUploadedImageUrl(null);
+      setImageFiles([]); 
+      setUploadedImageUrls([]); 
 
       const message = action === "add" ? "Product added successfully" : "Product updated successfully";
       toast.success(message);
@@ -77,7 +82,7 @@ function AdminProducts() {
     });
   }
 
-    useEffect(() => {
+  useEffect(() => {
     localStorage.setItem("adminProductCurrentPage", page);
   }, [page]);
 
@@ -97,7 +102,7 @@ function AdminProducts() {
 
   function isFormValid() {
     return Object.keys(formData)
-      .filter((key) => key !== "averageReview" && key !== "salePrice") 
+      .filter((key) => key !== "averageReview" && key !== "images")
       .every((key) => formData[key] !== "");
   }
 
@@ -175,10 +180,10 @@ function AdminProducts() {
           </SheetHeader>
 
           <ProductImageUpload
-            imageFile={imageFile}
-            setImageFile={setImageFile}
-            uploadedImageUrl={uploadedImageUrl}
-            setUploadedImageUrl={setUploadedImageUrl}
+            imageFiles={imageFiles} 
+            setImageFiles={setImageFiles}
+            uploadedImageUrls={uploadedImageUrls}
+            setUploadedImageUrls={setUploadedImageUrls}
             setImageLoadingState={setImageLoadingState}
             imageLoadingState={imageLoadingState}
             isEditMode={currentEditedId !== null}

@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function AdminDashboard() {
-  const [imageFile, setImageFile] = useState(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [imageFiles, setImageFiles] = useState([]); // Corrected to use setImageFiles
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); // Update to an array
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const dispatch = useDispatch();
   const { featureImageList, loadingFeatureImages } = useSelector((state) => state.commonFeature);
@@ -21,19 +21,22 @@ function AdminDashboard() {
   }, [dispatch]);
 
   function handleUploadFeatureImage() {
-    dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(getFeatureImages());
-        setImageFile(null);
-        setUploadedImageUrl("");
-      }
+    // Upload each image URL
+    uploadedImageUrls.forEach((url) => {
+      dispatch(addFeatureImage(url)).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(getFeatureImages());
+        }
+      });
     });
+    // Reset the image state
+    setImageFiles([]);
+    setUploadedImageUrls([]);
   }
 
   function handleDeleteFeatureImage(imageId) {
     dispatch(deleteFeatureImage(imageId));
   }
-
 
   return (
     <div>
@@ -75,10 +78,10 @@ function AdminDashboard() {
         ) : (
           <>
             <ProductImageUpload
-              imageFile={imageFile}
-              setImageFile={setImageFile}
-              uploadedImageUrl={uploadedImageUrl}
-              setUploadedImageUrl={setUploadedImageUrl}
+              imageFiles={imageFiles}
+              setImageFiles={setImageFiles} // Corrected here
+              uploadedImageUrls={uploadedImageUrls}
+              setUploadedImageUrls={setUploadedImageUrls}
               setImageLoadingState={setImageLoadingState}
               imageLoadingState={imageLoadingState}
               isCustomStyling={true}

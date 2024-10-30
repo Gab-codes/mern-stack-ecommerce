@@ -11,6 +11,10 @@ import { Label } from "../ui/label";
 import StarRatingComponent from "../common/star-rating";
 import { useEffect, useState } from "react";
 import { addReview, getReviews } from "@/store/shop/review-slice";
+import { Swiper, SwiperSlide } from 'swiper/react'; 
+import 'swiper/swiper-bundle.css'; 
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const [reviewMsg, setReviewMsg] = useState("");
@@ -35,7 +39,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
           toast.error(`Only ${getQuantity} quantity can be added for this item`);
-
           return;
         }
       }
@@ -91,146 +94,165 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       });
   }
   
-  
-
   useEffect(() => {
     if (productDetails !== null) dispatch(getReviews(productDetails?._id));
   }, [productDetails]);
 
-
   const averageReview =
     reviews && reviews.length > 0
-      ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
-        reviews.length
+      ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) / reviews.length
       : 0;
 
   return (
-<Dialog open={open} onOpenChange={handleDialogClose}>
-  <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[80vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
-    <div className="relative overflow-hidden rounded-lg">
-    <img
-      src={productDetails?.image}
-      alt={productDetails?.title}
-      width={600}
-      height={600}
-      className="aspect-square w-full max-w-[350px] max-h-[300px] md:max-w-[600px] md:max-h-[600px] object-cover"
-    />
-    </div>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
+      <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[80vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
+        <div className="relative overflow-hidden rounded-lg">
+          {productDetails?.images?.length > 1 ? (
+            <Swiper 
+              spaceBetween={10} 
+              slidesPerView={1} 
+              pagination={{ clickable: true }} 
+              modules={[Pagination]} 
+              className="cursor-move"
+              grabCursor={true}
+            >
 
-    <div>
-      <div>
-        <h1 className="text-2xl font-extrabold">{productDetails?.title}</h1>
-        <p className="text-muted-foreground text-lg mb-2 mt-2">
-          {productDetails?.description}
-        </p>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <p
-          className={`text-xl font-bold text-primary ${
-            productDetails?.salePrice > 0 ? "line-through" : ""
-          }`}
-        >
-           {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(productDetails?.price)}`}
-        </p>
-        {productDetails?.salePrice > 0 && (
-          <p className="text-xl font-bold text-muted-foreground">
-           {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(productDetails?.salePrice)}`}
-          </p>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2 mt-2">
-        <div className="flex items-center gap-0.5">
-          <StarRatingComponent rating={averageReview} size="w-3.5 h-3.5 sm:w-5 sm:h-5"/>
-        </div>
-        <span className="text-muted-foreground">
-          ({averageReview.toFixed(1)})
-        </span>
-      </div>
-
-      <div className="mt-5 mb-5">
-        {productDetails?.totalStock === 0 ? (
-          <Button className="w-full opacity-60 cursor-not-allowed">
-            Out of Stock
-          </Button>
-        ) : (
-          <Button
-            className="w-full"
-            onClick={() =>
-              handleAddToCart(productDetails?._id, productDetails?.totalStock)
-            }
-          >
-            Add to Cart
-          </Button>
-        )}
-      </div>
-
-      <Separator />
-
-      <div className="max-h-[300px] overflow-auto">
-        <h2 className="text-xl font-bold mb-4">Reviews</h2>
-        <div className="grid gap-6">
-          {reviews && reviews.length > 0 ? (
-            reviews.map((reviewItem) => (
-              <div key={reviewItem?._id} className="flex gap-4">
-                <Avatar className="w-10 h-10 border">
-                  <AvatarFallback>
-                    {reviewItem?.userName[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold">{reviewItem?.userName}</h3>
-                  </div>
-                  <div className="flex items-center gap-0.5">
-                    <StarRatingComponent rating={reviewItem?.reviewValue} />
-                  </div>
-                  <p className="text-muted-foreground">
-                    {reviewItem.reviewMessage}
-                  </p>
-                </div>
-              </div>
-            ))
+              {productDetails.images.map((imgUrl, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={imgUrl}
+                    alt={productDetails?.title}
+                    width={600}
+                    height={600}
+                    className="aspect-square w-full object-cover"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
           ) : (
-            <h1>No Reviews</h1>
+            <img
+              src={productDetails?.images[0]}
+              alt={productDetails?.title}
+              width={600}
+              height={600}
+              className="aspect-square w-full object-cover"
+            />
           )}
         </div>
 
-        <div className="mt-10 flex-col flex gap-2 relative">
-          <Label>Write a review</Label>
-          <div className="flex gap-1">
-            <StarRatingComponent
-              rating={rating}
-              handleRatingChange={handleRatingChange}
-               size="w-3.5 h-3.5 sm:w-4 sm:h-4"
-            />
+        <div>
+          <div>
+            <h1 className="text-2xl font-extrabold">{productDetails?.title}</h1>
+            <p className="text-muted-foreground text-lg mb-2 mt-2">
+              {productDetails?.description}
+            </p>
           </div>
-          <Input
-            name="reviewMsg"
-            value={reviewMsg}
-            onChange={(event) => setReviewMsg(event.target.value)}
-            placeholder="Write a review..."
-            className="!w-[95%] ms-1"
-          />
-          <Button
-            onClick={handleAddReview}
-            disabled={reviewMsg.trim() === ""}
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
-    </div>
-  </DialogContent>
-</Dialog>
 
+          <div className="flex items-center justify-between">
+            <p
+              className={`text-xl font-bold text-primary ${
+                productDetails?.salePrice > 0 ? "line-through" : ""
+              }`}
+            >
+              {`₦${new Intl.NumberFormat('en-NG', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(productDetails?.price)}`}
+            </p>
+            {productDetails?.salePrice > 0 && (
+              <p className="text-xl font-bold text-muted-foreground">
+                {`₦${new Intl.NumberFormat('en-NG', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                }).format(productDetails?.salePrice)}`}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-0.5">
+              <StarRatingComponent rating={averageReview} size="w-3.5 h-3.5 sm:w-5 sm:h-5"/>
+            </div>
+            <span className="text-muted-foreground">
+              ({averageReview.toFixed(1)})
+            </span>
+          </div>
+
+          <div className="mt-5 mb-5">
+            {productDetails?.totalStock === 0 ? (
+              <Button className="w-full opacity-60 cursor-not-allowed">
+                Out of Stock
+              </Button>
+            ) : (
+              <Button
+                className="w-full"
+                onClick={() =>
+                  handleAddToCart(productDetails?._id, productDetails?.totalStock)
+                }
+              >
+                Add to Cart
+              </Button>
+            )}
+          </div>
+
+          <Separator />
+
+          <div className="max-h-[300px] overflow-auto">
+            <h2 className="text-xl font-bold mb-4">Reviews</h2>
+            <div className="grid gap-6">
+              {reviews && reviews.length > 0 ? (
+                reviews.map((reviewItem) => (
+                  <div key={reviewItem?._id} className="flex gap-4">
+                    <Avatar className="w-10 h-10 border">
+                      <AvatarFallback>
+                        {reviewItem?.userName[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold">{reviewItem?.userName}</h3>
+                      </div>
+                      <div className="flex items-center gap-0.5">
+                        <StarRatingComponent rating={reviewItem?.reviewValue} />
+                      </div>
+                      <p className="text-muted-foreground">
+                        {reviewItem.reviewMessage}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <h1>No Reviews</h1>
+              )}
+            </div>
+
+            <div className="mt-10 flex-col flex gap-2 relative">
+              <Label>Write a review</Label>
+              <div className="flex gap-1">
+                <StarRatingComponent
+                  rating={rating}
+                  handleRatingChange={handleRatingChange}
+                  size="w-3.5 h-3.5 sm:w-4 sm:h-4"
+                />
+              </div>
+              <Input
+                name="reviewMsg"
+                value={reviewMsg}
+                onChange={(event) => setReviewMsg(event.target.value)}
+                placeholder="Write a review..."
+                className="!w-[95%] ms-1"
+              />
+              <Button
+                onClick={handleAddReview}
+                disabled={reviewMsg.trim() === ""}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

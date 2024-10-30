@@ -2,17 +2,33 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { productOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
+import { Swiper, SwiperSlide } from 'swiper/react'; 
+import 'swiper/swiper-bundle.css'; 
 
-export default function ShoppingProductTitle({ product, handleGetProductDetails, handleAddtoCart,}) {
+export default function ShoppingProductTitle({ product, handleGetProductDetails, handleAddtoCart }) {
   return (
     <Card className="w-full max-w-sm mx-auto cursor-pointer">
       <div onClick={() => handleGetProductDetails(product?._id)}>
         <div className="relative">
-          <img
-            src={product?.image}
-            alt={product?.title}
-            className="w-full h-200px object-cover rounded-t-lg"
-          />
+          {product?.images?.length > 1 ? (
+            <Swiper spaceBetween={10} slidesPerView={1}>
+              {product.images.map((imgUrl, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={imgUrl}
+                    alt={product?.title}
+                    className="w-full h-200px object-cover rounded-t-lg"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <img
+              src={product?.images[0]} 
+              alt={product?.title}
+              className="w-full h-200px object-cover rounded-t-lg"
+            />
+          )}
           {product?.totalStock === 0 ? (
             <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
               Out Of Stock
@@ -43,17 +59,17 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
                 product?.salePrice > 0 ? "line-through" : ""
               } text-lg sm:text-lg font-semibold text-primary`}
             >
-                {`₦${new Intl.NumberFormat('en-NG', {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                }).format(product?.price)}`}
+              {`₦${new Intl.NumberFormat('en-NG', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(product?.price)}`}
             </span>
             {product?.salePrice > 0 ? (
               <span className="text-lg sm:text-lg font-semibold text-primary">
-              {`₦${new Intl.NumberFormat('en-NG', {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(product?.salePrice)}`}
+                {`₦${new Intl.NumberFormat('en-NG', {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                }).format(product?.salePrice)}`}
               </span>
             ) : null}
           </div>
@@ -76,5 +92,3 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
     </Card>
   );
 }
-
-
