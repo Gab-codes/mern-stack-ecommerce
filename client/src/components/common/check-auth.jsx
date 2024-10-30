@@ -4,21 +4,30 @@ export default function CheckAuth({ isAuthenticated, user, children }) {
     const location = useLocation();
     const fromPath = location.state?.from || "/shop/home"; 
 
-    const publicRoutes = ["/auth/login", "/auth/register", "/shop/home", "/shop/listing", "/shop/search"];
 
-    if (isAuthenticated && (location.pathname === "/auth/login" || location.pathname === "/auth/register")) {
+    if (location.pathname === "/" || location.pathname === "/home") {
         return <Navigate to="/shop/home" replace />;
     }
 
-    if (isAuthenticated && user?.role === "admin" && location.pathname.includes("/shop")) {
-        return <Navigate to="/admin/dashboard" />;
+    if (isAuthenticated && user?.role === "admin") {
+        if (location.pathname.includes("/shop")) {
+            return <Navigate to="/admin/dashboard" />;
+        }
     }
 
-    if (!isAuthenticated && !publicRoutes.includes(location.pathname)) {
-        return <Navigate to="/auth/login" state={{ from: location.pathname }} />;
+
+    const publicRoutes = ["/shop/home", "/shop/listing", "/shop/search"]; 
+    if (publicRoutes.includes(location.pathname)) {
+        return <>{children}</>; // Allow public access
     }
 
-    if (isAuthenticated && user?.role !== "admin" && location.pathname.includes("/admin")) {
+
+    if (!isAuthenticated && !(location.pathname.includes('/login') || location.pathname.includes('/register'))) {
+        return <Navigate to='/auth/login' />;  
+    }
+
+
+    if (isAuthenticated && user?.role !== "admin" && location.pathname.includes("admin")) {
         return <Navigate to="/unauth-page" />;
     }
 
