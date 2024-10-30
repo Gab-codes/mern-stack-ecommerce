@@ -12,6 +12,7 @@ import ProductDetailsDialog from "@/components/shop/product-details";
 import { toast } from "react-toastify";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton"; 
 
 function buildQueryString(filterParams) {
   const queryParams = Object.entries(filterParams).reduce((acc, [key, value]) => {
@@ -33,13 +34,14 @@ function ShoppingListing() {
   const [sort, setSort] = useState("price-lowtohigh");
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setIsDetailsDialogOpen] = useState(false);
-  const categorySearchParam = searchParams.get("category");
+  const productSearchParam = searchParams.get("product");
 
   const [page, setPage] = useState(() => {
     return localStorage.getItem("listingCurrentPage") ? Number(localStorage.getItem("listingCurrentPage")) : 1;
   });
   const limit = 10; 
-  const [totalPages, setTotalPages] = useState(0); 
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true); 
 
   const onPageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) { 
@@ -53,6 +55,7 @@ function ShoppingListing() {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true); 
       const response = await dispatch(fetchAllFilteredProducts({
         filterParams: filters,
         sortParams: sort,
@@ -61,11 +64,11 @@ function ShoppingListing() {
       }));
       if (response?.payload?.pagination) {
         setTotalPages(response.payload.pagination.totalPages);
-
         if (page > response.payload.pagination.totalPages) {
           setPage(1);
         }
       }
+      setLoading(false); 
     };
     fetchProducts();
   }, [dispatch, sort, filters, page, limit]);
@@ -122,7 +125,7 @@ function ShoppingListing() {
 
   useEffect(() => {
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
-  }, [categorySearchParam]);
+  }, [productSearchParam]);
 
   useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
@@ -169,8 +172,13 @@ function ShoppingListing() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
-          {productList?.length > 0
-            ? productList.map((product) => (
+          {loading ? (
+            
+            Array.from({ length: 10 }).map((_, index) => (
+              <Skeleton key={index} className="h-60 w-full rounded-md" />
+            ))
+          ) : productList?.length > 0 ? (
+            productList.map((product) => (
               <ShoppingProductTitle
                 key={product._id}
                 product={product}
@@ -178,10 +186,13 @@ function ShoppingListing() {
                 handleAddtoCart={handleAddtoCart}
               />
             ))
-            : <p>No products available.</p>}
+          ) : (
+            <p>No products available.</p>
+          )}
         </div>
-        {productList?.length > 0 ?
-          <Pagination className="flex flex-col justify-center items-center my-8 " >
+
+        {productList?.length > 0 ? (
+          <Pagination className="flex flex-col justify-center items-center my-8">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
@@ -213,8 +224,9 @@ function ShoppingListing() {
               </span>
             </div>
           </Pagination>
-          : ""
-        }
+        ) : (
+          ""
+        )}
       </div>
 
       <ProductDetailsDialog open={openDetailsDialog} setOpen={setIsDetailsDialogOpen} productDetails={productDetails} />

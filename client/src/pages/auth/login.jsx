@@ -2,12 +2,13 @@ import CommonForm from "@/components/common/form";
 import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 
 
 function AuthLogin() {
+    const location = useLocation();
 
     const displayMsg = (message) => {
         toast.success(message);
@@ -27,10 +28,12 @@ function AuthLogin() {
     
     function onSubmit(event) {
         event.preventDefault();
-        dispatch(loginUser(formData)).then( (data) => {
+        dispatch(loginUser(formData)).then((data) => {
             if (data?.payload?.success) {
                 displayMsg(data.payload.message || "Login successful");
-                navigate("/shop/home");
+                
+                const redirectPath = location.state?.from || "/shop/home"; 
+                navigate(redirectPath); 
             } else {
                 displayErrorMsg(data?.payload?.message || "Login failed. Please try again.");
             }
@@ -38,7 +41,6 @@ function AuthLogin() {
             displayErrorMsg(error.message || "An unexpected error occurred.");
         });
     }
-
     return (
         <div className="mx-auto w-full max-w-md space-y-6">
             <div className="text-center">

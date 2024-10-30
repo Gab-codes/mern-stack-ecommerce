@@ -63,6 +63,11 @@ function ShoppingHome() {
       [section]: [getCurrentItem.id],
     };
 
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
     navigate(`/shop/listing`);
   }

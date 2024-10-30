@@ -37,7 +37,7 @@ function MenuItems({ setOpenCartSheet }) {
 
     location.pathname.includes("listing") && currentFilter !== null
       ? setSearchParams(
-          new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
+          new URLSearchParams(`?product=${getCurrentMenuItem.id}`)
         )
       : navigate(getCurrentMenuItem.path);
     setOpenCartSheet(false);

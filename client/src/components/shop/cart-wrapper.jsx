@@ -20,7 +20,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
       : 0;
 
   const handleWhatsAppCheckout = () => {
-    const whatsappNumber = "+2348171981099";
+    const whatsappNumber = "+2348033662950";
     const messageIntro = cartItems.length > 1 
       ? "Hello, I want to purchase these products:"
       : "Hello, I want to purchase this product:";
@@ -79,7 +79,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
           </div>
           <Button
             onClick={() => {
-              navigate("/shop/checkout");
+              navigate("/shop/checkout", { state: { from: location.pathname } });
               setOpenCartSheet(false);
             }}
             className="w-full mt-6"
