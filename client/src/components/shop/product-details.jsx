@@ -113,7 +113,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               slidesPerView={1} 
               pagination={{ clickable: true }} 
               modules={[Pagination]} 
-              className="cursor-move"
               grabCursor={true}
             >
 

@@ -2,16 +2,26 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { productOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
-import { Swiper, SwiperSlide } from 'swiper/react'; 
-import 'swiper/swiper-bundle.css'; 
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/swiper-bundle.css";
+import { Pagination } from "swiper/modules";
 
-export default function ShoppingProductTitle({ product, handleGetProductDetails, handleAddtoCart }) {
+export default function ShoppingProductTitle({
+  product,
+  handleGetProductDetails,
+  handleAddtoCart,
+}) {
   return (
     <Card className="w-full max-w-sm mx-auto cursor-pointer">
       <div onClick={() => handleGetProductDetails(product?._id)}>
         <div className="relative">
           {product?.images?.length > 1 ? (
-            <Swiper spaceBetween={10} slidesPerView={1}>
+            <Swiper
+              spaceBetween={10}
+              slidesPerView={1}
+              pagination={{ clickable: true }}
+              modules={[Pagination]}
+            >
               {product.images.map((imgUrl, index) => (
                 <SwiperSlide key={index}>
                   <img
@@ -24,21 +34,21 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
             </Swiper>
           ) : (
             <img
-              src={product?.images[0]} 
+              src={product?.images[0]}
               alt={product?.title}
               className="w-full h-200px object-cover rounded-t-lg"
             />
           )}
           {product?.totalStock === 0 ? (
-            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+            <Badge className="absolute z-40 top-2 left-2 bg-red-500 hover:bg-red-600">
               Out Of Stock
             </Badge>
           ) : product?.totalStock < 10 ? (
-            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+            <Badge className="absolute z-40 top-2 left-2 bg-red-500 hover:bg-red-600">
               {`Only ${product?.totalStock} items left`}
             </Badge>
           ) : product?.salePrice > 0 ? (
-            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+            <Badge className="absolute z-40 top-2 left-2 bg-red-500 hover:bg-red-600">
               Sale
             </Badge>
           ) : null}
@@ -59,14 +69,14 @@ export default function ShoppingProductTitle({ product, handleGetProductDetails,
                 product?.salePrice > 0 ? "line-through" : ""
               } text-lg sm:text-lg font-semibold text-primary`}
             >
-              {`₦${new Intl.NumberFormat('en-NG', {
+              {`₦${new Intl.NumberFormat("en-NG", {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               }).format(product?.price)}`}
             </span>
             {product?.salePrice > 0 ? (
               <span className="text-lg sm:text-lg font-semibold text-primary">
-                {`₦${new Intl.NumberFormat('en-NG', {
+                {`₦${new Intl.NumberFormat("en-NG", {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
                 }).format(product?.salePrice)}`}

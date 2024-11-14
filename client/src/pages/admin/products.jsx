@@ -1,19 +1,34 @@
-
-
 import ProductImageUpload from "@/components/admin/image-upload";
 import AdminProductTile from "@/components/admin/product-title";
 import CommonForm from "@/components/common/form";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { addNewProduct, deleteProduct, editProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import {
+  addNewProduct,
+  deleteProduct,
+  editProduct,
+  fetchAllProducts,
+} from "@/store/admin/products-slice";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const initialFormData = {
-  images: [], 
+  images: [],
   title: "",
   description: "",
   category: "",
@@ -25,33 +40,38 @@ const initialFormData = {
 };
 
 function AdminProducts() {
-  const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
+  const [openCreateProductsDialog, setOpenCreateProductsDialog] =
+    useState(false);
   const [formData, setFormData] = useState(initialFormData);
-  const [imageFiles, setImageFiles] = useState([]); 
-  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); 
+  const [imageFiles, setImageFiles] = useState([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const [currentEditedId, setCurrentEditedId] = useState(null);
-  
+
   const [page, setPage] = useState(() => {
-    return localStorage.getItem("adminProductCurrentPage") ? Number(localStorage.getItem("adminProductCurrentPage")) : 1;
+    return localStorage.getItem("adminProductCurrentPage")
+      ? Number(localStorage.getItem("adminProductCurrentPage"))
+      : 1;
   });
   const limit = 10;
   const [totalPages, setTotalPages] = useState(0);
-  
+
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
 
   function onSubmit(event) {
     event.preventDefault();
-    const imagesToSubmit = uploadedImageUrls; 
-    const submissionData = { ...formData, images: imagesToSubmit }; 
+    const imagesToSubmit = uploadedImageUrls;
+    const submissionData = { ...formData, images: imagesToSubmit };
 
     if (currentEditedId !== null) {
-      dispatch(editProduct({ id: currentEditedId, formData: submissionData }))
-        .then((data) => handleAfterSubmit(data, "edit"));
+      dispatch(
+        editProduct({ id: currentEditedId, formData: submissionData })
+      ).then((data) => handleAfterSubmit(data, "edit"));
     } else {
-      dispatch(addNewProduct(submissionData))
-        .then((data) => handleAfterSubmit(data, "add"));
+      dispatch(addNewProduct(submissionData)).then((data) =>
+        handleAfterSubmit(data, "add")
+      );
     }
   }
 
@@ -61,10 +81,13 @@ function AdminProducts() {
       setFormData(initialFormData);
       setOpenCreateProductsDialog(false);
       setCurrentEditedId(null);
-      setImageFiles([]); 
-      setUploadedImageUrls([]); 
+      setImageFiles([]);
+      setUploadedImageUrls([]);
 
-      const message = action === "add" ? "Product added successfully" : "Product updated successfully";
+      const message =
+        action === "add"
+          ? "Product added successfully"
+          : "Product updated successfully";
       toast.success(message);
     } else {
       toast.error("An error occurred. Please try again.");
@@ -102,14 +125,19 @@ function AdminProducts() {
 
   function isFormValid() {
     return Object.keys(formData)
-      .filter((key) => key !== "averageReview" && key !== "images")
-      .every((key) => formData[key] !== "");
+      .filter(
+        (key) =>
+          key !== "averageReview" && key !== "images" && key !== "salePrice"
+      )
+      .every((key) => formData[key].trim() !== "");
   }
 
   return (
     <Fragment>
       <div className="mb-5 w-full flex justify-end">
-        <Button onClick={() => setOpenCreateProductsDialog(true)}>Add New Product</Button>
+        <Button onClick={() => setOpenCreateProductsDialog(true)}>
+          Add New Product
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -128,8 +156,8 @@ function AdminProducts() {
           <p>No products available.</p>
         )}
       </div>
-      { productList && productList.length > 0 ? 
-        <Pagination className="flex flex-col justify-center items-center mt-6 mb-10" >
+      {productList && productList.length > 0 ? (
+        <Pagination className="flex flex-col justify-center items-center mt-6 mb-10">
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
@@ -149,20 +177,18 @@ function AdminProducts() {
               </PaginationItem>
             ))}
             <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={() => onPageChange(page + 1)}
-              />
+              <PaginationNext href="#" onClick={() => onPageChange(page + 1)} />
             </PaginationItem>
           </PaginationContent>
           <div className="flex items-center justify-center mt-2">
-              <span className="text-muted-foreground">
-                Page {page} of {totalPages}
-              </span>
-            </div>
+            <span className="text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+          </div>
         </Pagination>
-        : " "
-      }
+      ) : (
+        " "
+      )}
 
       <Sheet
         open={openCreateProductsDialog}
@@ -180,7 +206,7 @@ function AdminProducts() {
           </SheetHeader>
 
           <ProductImageUpload
-            imageFiles={imageFiles} 
+            imageFiles={imageFiles}
             setImageFiles={setImageFiles}
             uploadedImageUrls={uploadedImageUrls}
             setUploadedImageUrls={setUploadedImageUrls}
@@ -196,7 +222,7 @@ function AdminProducts() {
               setFormData={setFormData}
               buttonText={currentEditedId !== null ? "Edit" : "Add"}
               formControls={addProductFormElements}
-              isBtnDisabled={!isFormValid()} 
+              isBtnDisabled={!isFormValid()}
             />
           </div>
         </SheetContent>

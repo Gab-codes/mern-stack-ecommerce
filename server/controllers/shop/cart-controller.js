@@ -24,13 +24,11 @@ const addToCart = async (req, res) => {
     let cart;
 
     if (userId) {
-      
       cart = await Cart.findOne({ userId });
       if (!cart) {
         cart = new Cart({ userId, items: [] });
       }
     } else {
-      
       cart = await Cart.findOne({ guestId });
       if (!cart) {
         cart = new Cart({ guestId, items: [] });
@@ -63,9 +61,8 @@ const addToCart = async (req, res) => {
 
 const fetchCartItems = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
 
-    
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -75,18 +72,15 @@ const fetchCartItems = async (req, res) => {
 
     let cart;
 
-    
-    if (id.startsWith('guest_')) {
-      
+    if (id.startsWith("guest_")) {
       cart = await Cart.findOne({ guestId: id }).populate({
         path: "items.productId",
-        select: "image title price salePrice",
+        select: "images title price salePrice",
       });
     } else {
-      
       cart = await Cart.findOne({ userId: id }).populate({
         path: "items.productId",
-        select: "image title price salePrice",
+        select: "images title price salePrice",
       });
     }
 
@@ -97,21 +91,18 @@ const fetchCartItems = async (req, res) => {
       });
     }
 
-    
     const validItems = cart.items.filter(
       (productItem) => productItem.productId
     );
 
-    
     if (validItems.length < cart.items.length) {
       cart.items = validItems;
       await cart.save();
     }
 
-    
     const populateCartItems = validItems.map((item) => ({
       productId: item.productId._id,
-      image: item.productId.image,
+      images: item.productId.images,
       title: item.productId.title,
       price: item.productId.price,
       salePrice: item.productId.salePrice,
@@ -133,7 +124,6 @@ const fetchCartItems = async (req, res) => {
     });
   }
 };
-
 
 const updateCartItemQty = async (req, res) => {
   try {
@@ -176,12 +166,12 @@ const updateCartItemQty = async (req, res) => {
 
     await cart.populate({
       path: "items.productId",
-      select: "image title price salePrice",
+      select: "images title price salePrice",
     });
 
     const populateCartItems = cart.items.map((item) => ({
       productId: item.productId ? item.productId._id : null,
-      image: item.productId ? item.productId.image : null,
+      images: item.productId ? item.productId.images : null,
       title: item.productId ? item.productId.title : "Product not found",
       price: item.productId ? item.productId.price : null,
       salePrice: item.productId ? item.productId.salePrice : null,
@@ -206,9 +196,8 @@ const updateCartItemQty = async (req, res) => {
 
 const deleteCartItem = async (req, res) => {
   try {
-    const { id, productId } = req.params; 
+    const { id, productId } = req.params;
 
-    
     if (!id || !productId) {
       return res.status(400).json({
         success: false,
@@ -218,15 +207,12 @@ const deleteCartItem = async (req, res) => {
 
     let cart;
 
-    
-    if (id.startsWith('guest_')) {
-      
+    if (id.startsWith("guest_")) {
       cart = await Cart.findOne({ guestId: id }).populate({
         path: "items.productId",
         select: "image title price salePrice",
       });
     } else {
-      
       cart = await Cart.findOne({ userId: id }).populate({
         path: "items.productId",
         select: "image title price salePrice",
@@ -240,14 +226,12 @@ const deleteCartItem = async (req, res) => {
       });
     }
 
-    
     cart.items = cart.items.filter(
       (item) => item.productId._id.toString() !== productId
     );
 
     await cart.save();
 
-    
     await cart.populate({
       path: "items.productId",
       select: "image title price salePrice",
@@ -255,7 +239,7 @@ const deleteCartItem = async (req, res) => {
 
     const populateCartItems = cart.items.map((item) => ({
       productId: item.productId ? item.productId._id : null,
-      image: item.productId ? item.productId.image : null,
+      images: item.productId ? item.productId.images : null,
       title: item.productId ? item.productId.title : "Product not found",
       price: item.productId ? item.productId.price : null,
       salePrice: item.productId ? item.productId.salePrice : null,

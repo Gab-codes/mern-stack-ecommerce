@@ -21,14 +21,17 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
 
   const handleWhatsAppCheckout = () => {
     const whatsappNumber = "+2348033662950";
-    const messageIntro = cartItems.length > 1 
-      ? "Hello, I want to purchase these products:"
-      : "Hello, I want to purchase this product:";
+    const messageIntro =
+      cartItems.length > 1
+        ? "Hello, I want to purchase these products:"
+        : "Hello, I want to purchase this product:";
 
     const messageBody = cartItems
       .map(
         (item) =>
-          `\n- ${item.title} (₦${item.salePrice > 0 ? item.salePrice : item.price} x ${item.quantity})\n  Image: ${item.image}`
+          `\n- ${item.title} (₦${
+            item.salePrice > 0 ? item.salePrice : item.price
+          } x ${item.quantity})\n  Image: ${item.image}`
       )
       .join("");
 
@@ -38,6 +41,17 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
     window.open(whatsappURL, "_blank");
     setOpenCartSheet(false);
   };
+
+  function handleNavigateToHomePage() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    navigate(`/shop/listing`);
+
+    setOpenCartSheet(false);
+  }
 
   return (
     <SheetContent className="sm:max-w-md overflow-auto">
@@ -52,13 +66,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
         ) : (
           <div className="text-center py-4">
             <p className="text-muted-foreground">Your cart is empty.</p>
-            <Button
-              onClick={() => {
-                navigate("/shop/listing");
-                setOpenCartSheet(false);
-              }}
-              className="mt-4"
-            >
+            <Button onClick={handleNavigateToHomePage} className="mt-4">
               Continue Shopping
             </Button>
           </div>
@@ -79,7 +87,9 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
           </div>
           <Button
             onClick={() => {
-              navigate("/shop/checkout", { state: { from: location.pathname } });
+              navigate("/shop/checkout", {
+                state: { from: location.pathname },
+              });
               setOpenCartSheet(false);
             }}
             className="w-full mt-6"
