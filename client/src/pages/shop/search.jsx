@@ -18,15 +18,12 @@ function SearchProducts() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
-  
-  // Fetch Redux states
+
   const { searchResults, isLoading } = useSelector((state) => state.shopSearch);
   const { productDetails } = useSelector((state) => state.shopProducts);
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
-  
 
-  // Debounced value to reduce unnecessary API calls
   const debouncedKeyword = useDebounce(keyword, 500);
 
   useEffect(() => {
@@ -49,7 +46,9 @@ function SearchProducts() {
       if (indexOfCurrentItem > -1) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
-          toast.error(`Only ${getTotalStock} quantity can be added for this item`);
+          toast.error(
+            `Only ${getTotalStock} quantity can be added for this item`
+          );
           return;
         }
       }
@@ -93,13 +92,13 @@ function SearchProducts() {
 
       {isLoading ? (
         <div className="flex justify-center">
-          <p>Loading...</p> {/* Placeholder for loading spinner */}
+          <p>Loading...</p>
         </div>
       ) : !searchResults.length && debouncedKeyword.trim().length > 3 ? (
         <h1 className="text-5xl font-extrabold">No result found!</h1>
       ) : null}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {searchResults.map((item) => (
           <ShoppingProductTile
             key={item._id}

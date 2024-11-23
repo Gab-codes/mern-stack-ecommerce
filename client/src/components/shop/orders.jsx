@@ -2,28 +2,50 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Dialog } from "../ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "../ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersByUserId, getOrderDetails, resetOrderDetails } from "@/store/shop/order-slice";
+import {
+  getAllOrdersByUserId,
+  getOrderDetails,
+  resetOrderDetails,
+} from "@/store/shop/order-slice";
 import { Badge } from "../ui/badge";
 import ShoppingOrderDetailsView from "./order-details";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 function ShoppingOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [page, setPage] = useState(() => {
-    return localStorage.getItem("userCurrentOrdersPage") ? Number(localStorage.getItem("userCurrentOrdersPage")) : 1;
+    return sessionStorage.getItem("userCurrentOrdersPage")
+      ? Number(sessionStorage.getItem("userCurrentOrdersPage"))
+      : 1;
   });
-  const limit = 10;   
-  const { orderList, orderDetails, totalOrders } = useSelector((state) => state.shopOrder);
+  const limit = 10;
+  const { orderList, orderDetails, totalOrders } = useSelector(
+    (state) => state.shopOrder
+  );
 
   const statusClass = {
-  confirmed: "bg-green-400 hover:bg-green-500",
-  delivered: "bg-green-600 hover:bg-green-700",
-  cancelled: "bg-red-600 hover:bg-red-700",
-  processing: "bg-yellow-500 hover:bg-yellow-600",
+    confirmed: "bg-green-400 hover:bg-green-500",
+    delivered: "bg-green-600 hover:bg-green-700",
+    cancelled: "bg-red-600 hover:bg-red-700",
+    processing: "bg-yellow-500 hover:bg-yellow-600",
   };
 
   const totalPages = totalOrders ? Math.ceil(totalOrders / limit) : 0;
@@ -38,8 +60,8 @@ function ShoppingOrders() {
     }
   }, [dispatch, user?.id, page, limit]);
 
-    useEffect(() => {
-    localStorage.setItem("userCurrentOrdersPage", page);
+  useEffect(() => {
+    sessionStorage.setItem("userCurrentOrdersPage", page);
   }, [page]);
 
   useEffect(() => {
@@ -50,7 +72,7 @@ function ShoppingOrders() {
 
   function handleCloseDialog() {
     setOpenDetailsDialog(false);
-    dispatch(resetOrderDetails());  
+    dispatch(resetOrderDetails());
   }
 
   const onPageChange = (newPage) => {
@@ -84,21 +106,30 @@ function ShoppingOrders() {
                   <TableCell>{orderItem?._id}</TableCell>
                   <TableCell>{orderItem?.orderDate.split("T")[0]}</TableCell>
                   <TableCell>
-                    <Badge className={`py-1 px-3 ${statusClass[orderItem?.orderStatus]}`}>
+                    <Badge
+                      className={`py-1 px-3 ${
+                        statusClass[orderItem?.orderStatus]
+                      }`}
+                    >
                       {orderItem?.orderStatus}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                  {`₦${new Intl.NumberFormat('en-NG', {
+                    {`₦${new Intl.NumberFormat("en-NG", {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0,
-                  }).format(orderItem?.totalAmount)}`}
+                    }).format(orderItem?.totalAmount)}`}
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => handleFetchOrderDetails(orderItem?._id)}>
+                    <Button
+                      onClick={() => handleFetchOrderDetails(orderItem?._id)}
+                    >
                       View Details
                     </Button>
-                    <Dialog open={openDetailsDialog} onOpenChange={handleCloseDialog}>
+                    <Dialog
+                      open={openDetailsDialog}
+                      onOpenChange={handleCloseDialog}
+                    >
                       <ShoppingOrderDetailsView orderDetails={orderDetails} />
                     </Dialog>
                   </TableCell>
@@ -109,7 +140,7 @@ function ShoppingOrders() {
         ) : (
           <p>No orders found.</p>
         )}
-        { orderList && orderList.length > 0 ? 
+        {orderList && orderList.length > 0 ? (
           <Pagination className="flex flex-col justify-center items-center mt-6 mb-10">
             <PaginationContent>
               <PaginationItem>
@@ -142,8 +173,9 @@ function ShoppingOrders() {
               </span>
             </div>
           </Pagination>
-          : " "
-        }
+        ) : (
+          " "
+        )}
       </CardContent>
     </Card>
   );

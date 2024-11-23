@@ -2,21 +2,43 @@ import { useEffect, useState, useMemo } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Dialog } from "../ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink } from "../ui/pagination"; 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "../ui/pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "../ui/badge";
 import AdminOrderDetailsView from "./order-details";
-import { getAllOrdersForAdmin, getOrderDetailsForAdmin, resetOrderDetails } from "@/store/admin/order-slice";
+import {
+  getAllOrdersForAdmin,
+  getOrderDetailsForAdmin,
+  resetOrderDetails,
+} from "@/store/admin/order-slice";
 
 function AdminOrdersView() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [page, setPage] = useState(() => {
-    return localStorage.getItem("adminOrdersCurrentPage") ? Number(localStorage.getItem("adminOrdersCurrentPage")) : 1;
+    return sessionStorage.getItem("adminOrdersCurrentPage")
+      ? Number(sessionStorage.getItem("adminOrdersCurrentPage"))
+      : 1;
   });
-  const limit = 10; 
-  
-  const { orderList, orderDetails, totalOrders } = useSelector((state) => state.adminOrder);
+  const limit = 10;
+
+  const { orderList, orderDetails, totalOrders } = useSelector(
+    (state) => state.adminOrder
+  );
   const dispatch = useDispatch();
 
   const statusClass = {
@@ -41,7 +63,7 @@ function AdminOrdersView() {
   }
 
   useEffect(() => {
-    localStorage.setItem("adminOrdersCurrentPage", page);
+    sessionStorage.setItem("adminOrdersCurrentPage", page);
   }, [page]);
 
   const renderedOrders = useMemo(() => {
@@ -51,14 +73,16 @@ function AdminOrdersView() {
           <TableCell>{orderItem?.userId ?? "N/A"}</TableCell>
           <TableCell>{orderItem?.orderDate.split("T")[0] ?? "N/A"}</TableCell>
           <TableCell>
-            <Badge className={`py-1 px-3 ${statusClass[orderItem?.orderStatus]}`}>
+            <Badge
+              className={`py-1 px-3 ${statusClass[orderItem?.orderStatus]}`}
+            >
               {orderItem?.orderStatus}
             </Badge>
           </TableCell>
           <TableCell>
-            {`₦${new Intl.NumberFormat('en-NG', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
+            {`₦${new Intl.NumberFormat("en-NG", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
             }).format(orderItem?.totalAmount ?? "N/A")}`}
           </TableCell>
           <TableCell>
@@ -122,10 +146,7 @@ function AdminOrdersView() {
               </PaginationItem>
             ))}
             <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={() => onPageChange(page + 1)}
-              />
+              <PaginationNext href="#" onClick={() => onPageChange(page + 1)} />
             </PaginationItem>
           </PaginationContent>
           <div className="flex items-center justify-center mt-2">
@@ -142,10 +163,10 @@ function AdminOrdersView() {
             dispatch(resetOrderDetails());
           }}
         >
-          <AdminOrderDetailsView 
-            orderDetails={orderDetails} 
-            page={page}        
-            limit={limit}      
+          <AdminOrderDetailsView
+            orderDetails={orderDetails}
+            page={page}
+            limit={limit}
           />
         </Dialog>
       </CardContent>
