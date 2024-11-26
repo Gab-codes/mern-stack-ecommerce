@@ -16,19 +16,26 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  fetchAllFilteredProducts, fetchProductDetails,} from "@/store/shop/products-slice";
+import {
+  fetchAllFilteredProducts,
+  fetchProductDetails,
+} from "@/store/shop/products-slice";
 import { useNavigate } from "react-router-dom";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { toast } from "react-toastify";
 import { getFeatureImages } from "@/store/common-slice";
 import ProductDetailsDialog from "@/components/shop/product-details";
 import ShoppingProductTitle from "@/components/shop/product-title";
+import menImg from "../../assets/men.jpg";
+import womenImg from "../../assets/women.jpg";
+import womenComboImg from "../../assets/women-combo.jpg";
+import menComboImg from "../../assets/men-combo.png";
 
-const categoriesWithIcon = [
-  { id: "men", label: "Men", icon: ShirtIcon },
-  { id: "women", label: "Women", icon: ShoppingBag },
-  { id: "menCombo", label: "Men Combo", icon: Package },
-  { id: "womenCombo", label: "Women Combo", icon: ShoppingBasket },
+const categoriesWithImage = [
+  { id: "men", label: "Men", image: menImg },
+  { id: "women", label: "Women", image: womenImg },
+  { id: "menCombo", label: "Men Combo", image: menComboImg },
+  { id: "womenCombo", label: "Women Combo", image: womenComboImg },
 ];
 
 const productTypesWithIcon = [
@@ -84,7 +91,9 @@ function ShoppingHome() {
       if (indexOfCurrentItem > -1) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
-          toast.error(`Only ${getQuantity} quantity can be added for this item`);
+          toast.error(
+            `Only ${getQuantity} quantity can be added for this item`
+          );
           return;
         }
       }
@@ -124,7 +133,6 @@ function ShoppingHome() {
       })
     );
   }, [dispatch]);
-
 
   useEffect(() => {
     dispatch(getFeatureImages());
@@ -177,7 +185,7 @@ function ShoppingHome() {
             Shop by category
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {categoriesWithIcon.map((categoryItem) => (
+            {categoriesWithImage.map((categoryItem) => (
               <Card
                 key={categoryItem.id}
                 onClick={() =>
@@ -186,7 +194,11 @@ function ShoppingHome() {
                 className="cursor-pointer hover:shadow-lg transition-shadow"
               >
                 <CardContent className="flex flex-col items-center justify-center p-6">
-                  <categoryItem.icon className="w-12 h-12 mb-4 text-primary" />
+                  <img
+                    src={categoryItem.image}
+                    alt={categoryItem.label}
+                    className="w-20 h-20 mb-4 rounded-full object-cover"
+                  />
                   <span className="font-bold">{categoryItem.label}</span>
                 </CardContent>
               </Card>
@@ -197,12 +209,16 @@ function ShoppingHome() {
 
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Shop by Product</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Shop by Product
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {productTypesWithIcon.map((productItem) => (
               <Card
-              key={productItem.id}
-                onClick={() => handleNavigateToListingPage(productItem, "product")}
+                key={productItem.id}
+                onClick={() =>
+                  handleNavigateToListingPage(productItem, "product")
+                }
                 className="cursor-pointer hover:shadow-lg transition-shadow"
               >
                 <CardContent className="flex flex-col items-center justify-center p-6">
@@ -218,18 +234,20 @@ function ShoppingHome() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
-          Latest Collection
+            Latest Collection
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {productList && productList.length > 0
-              ? productList.slice(0, 16).map((productItem) => ( 
-                  <ShoppingProductTitle
-                    key={productItem.id}
-                    handleGetProductDetails={handleGetProductDetails}
-                    product={productItem}
-                    handleAddtoCart={handleAddtoCart}
-                  />
-                ))
+              ? productList
+                  .slice(0, 16)
+                  .map((productItem) => (
+                    <ShoppingProductTitle
+                      key={productItem.id}
+                      handleGetProductDetails={handleGetProductDetails}
+                      product={productItem}
+                      handleAddtoCart={handleAddtoCart}
+                    />
+                  ))
               : null}
           </div>
         </div>
