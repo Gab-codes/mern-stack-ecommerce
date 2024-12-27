@@ -110,9 +110,9 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const Content = (
+  const content = (
     <>
-      <div className="relative overflow-hidden rounded-lg">
+      <div className="rounded-lg">
         {productDetails?.images?.length > 1 ? (
           <Swiper
             spaceBetween={10}
@@ -126,9 +126,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 <img
                   src={imgUrl}
                   alt={productDetails?.title}
-                  width={600}
-                  height={600}
-                  className="aspect-square w-full object-cover"
+                  className="aspect-square w-full object-cover max-w-[400px] max-h-[400px] sm:max-w-[600px] sm:max-[h-600px]"
                 />
               </SwiperSlide>
             ))}
@@ -137,9 +135,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
           <img
             src={productDetails?.images[0]}
             alt={productDetails?.title}
-            width={600}
-            height={600}
-            className="aspect-square w-full object-cover"
+            className="aspect-square w-full object-cover max-w-[400px] max-h-[400px] sm:max-w-[600px] sm:max-[h-600px]"
           />
         )}
       </div>
@@ -265,7 +261,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     return (
       <Dialog open={open} onOpenChange={handleDialogClose}>
         <DialogContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-h-[80vh] sm:max-h-[97vh] overflow-auto sm:p-7 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
-          {Content}
+          {content}
         </DialogContent>
       </Dialog>
     );
@@ -273,9 +269,9 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   return (
     <Drawer open={open} onOpenChange={handleDialogClose}>
-      <DrawerContent className="max-h-[92vh]">
-        <div className="grid grid-cols-1 gap-6 max-h-[89vh] overflow-y-auto p-4 w-full">
-          {Content}
+      <DrawerContent className="max-h-[83vh]">
+        <div className="relative grid grid-cols-1 gap-6 max-h-[80vh] h-full overflow-y-auto p-4 w-full">
+          {content}
         </div>
       </DrawerContent>
     </Drawer>
