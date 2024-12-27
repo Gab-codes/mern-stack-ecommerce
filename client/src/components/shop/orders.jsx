@@ -26,6 +26,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
+import useMediaQuery from "@/hooks/use-media-query";
+import { Drawer } from "../ui/drawer";
 
 function ShoppingOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
@@ -81,6 +83,8 @@ function ShoppingOrders() {
     }
   };
 
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   return (
     <Card>
       <CardHeader>
@@ -126,12 +130,21 @@ function ShoppingOrders() {
                     >
                       View Details
                     </Button>
-                    <Dialog
-                      open={openDetailsDialog}
-                      onOpenChange={handleCloseDialog}
-                    >
-                      <ShoppingOrderDetailsView orderDetails={orderDetails} />
-                    </Dialog>
+                    {isDesktop ? (
+                      <Dialog
+                        open={openDetailsDialog}
+                        onOpenChange={handleCloseDialog}
+                      >
+                        <ShoppingOrderDetailsView orderDetails={orderDetails} />
+                      </Dialog>
+                    ) : (
+                      <Drawer
+                        open={openDetailsDialog}
+                        onOpenChange={handleCloseDialog}
+                      >
+                        <ShoppingOrderDetailsView orderDetails={orderDetails} />
+                      </Drawer>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -140,7 +153,7 @@ function ShoppingOrders() {
         ) : (
           <p>No orders found.</p>
         )}
-        {orderList && orderList.length > 0 ? (
+        {orderList && orderList.length > 10 ? (
           <Pagination className="flex flex-col justify-center items-center mt-6 mb-10">
             <PaginationContent>
               <PaginationItem>

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { HousePlug } from "lucide-react";
 
 function AuthLogin() {
   const location = useLocation();
@@ -52,6 +53,12 @@ function AuthLogin() {
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
+      <Link to="/home">
+        <div className="text-2xl font-sans text-blue-600 hover:text-blue-800 ease-in-out font-bold flex items-center justify-center transition-colors duration-300">
+          Tianna Store
+          <HousePlug />
+        </div>
+      </Link>
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Sign in to your account

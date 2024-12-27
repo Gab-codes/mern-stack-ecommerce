@@ -1,21 +1,17 @@
-
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
 
 const handleImageUpload = async (req, res) => {
   try {
-    // Map over the files and upload each one to Cloudinary
     const uploadPromises = req.files.map(async (file) => {
       const b64 = Buffer.from(file.buffer).toString("base64");
       const url = "data:" + file.mimetype + ";base64," + b64;
-      const result = await imageUploadUtil(url); // Save image
-      return result.secure_url; // Store Cloudinary URL
+      const result = await imageUploadUtil(url);
+      return result.secure_url;
     });
 
-    // Wait for all uploads to complete
     const urls = await Promise.all(uploadPromises);
 
-    // Return all URLs in response
     res.json({
       success: true,
       urls,
@@ -28,8 +24,6 @@ const handleImageUpload = async (req, res) => {
     });
   }
 };
-
-
 
 const addProduct = async (req, res) => {
   try {
@@ -69,7 +63,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-
 const fetchAllProducts = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -97,7 +90,6 @@ const fetchAllProducts = async (req, res) => {
   }
 };
 
-
 const editProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -119,7 +111,6 @@ const editProduct = async (req, res) => {
         message: "Product not found",
       });
 
-    
     findProduct.title = title || findProduct.title;
     findProduct.description = description || findProduct.description;
     findProduct.category = category || findProduct.category;
@@ -128,7 +119,7 @@ const editProduct = async (req, res) => {
     findProduct.salePrice =
       salePrice === "" ? 0 : salePrice || findProduct.salePrice;
     findProduct.totalStock = totalStock || findProduct.totalStock;
-    findProduct.images = images || findProduct.images; 
+    findProduct.images = images || findProduct.images;
 
     await findProduct.save();
     res.status(200).json({
@@ -143,7 +134,6 @@ const editProduct = async (req, res) => {
     });
   }
 };
-
 
 const deleteProduct = async (req, res) => {
   try {

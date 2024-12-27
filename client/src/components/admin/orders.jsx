@@ -26,6 +26,8 @@ import {
   getOrderDetailsForAdmin,
   resetOrderDetails,
 } from "@/store/admin/order-slice";
+import { Drawer } from "../ui/drawer";
+import useMediaQuery from "@/hooks/use-media-query";
 
 function AdminOrdersView() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
@@ -61,6 +63,8 @@ function AdminOrdersView() {
   function handleFetchOrderDetails(getId) {
     dispatch(getOrderDetailsForAdmin(getId));
   }
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     sessionStorage.setItem("adminOrdersCurrentPage", page);
@@ -155,20 +159,35 @@ function AdminOrdersView() {
             </span>
           </div>
         </Pagination>
-
-        <Dialog
-          open={openDetailsDialog}
-          onOpenChange={() => {
-            setOpenDetailsDialog(false);
-            dispatch(resetOrderDetails());
-          }}
-        >
-          <AdminOrderDetailsView
-            orderDetails={orderDetails}
-            page={page}
-            limit={limit}
-          />
-        </Dialog>
+        {isDesktop ? (
+          <Dialog
+            open={openDetailsDialog}
+            onOpenChange={() => {
+              setOpenDetailsDialog(false);
+              dispatch(resetOrderDetails());
+            }}
+          >
+            <AdminOrderDetailsView
+              orderDetails={orderDetails}
+              page={page}
+              limit={limit}
+            />
+          </Dialog>
+        ) : (
+          <Drawer
+            open={openDetailsDialog}
+            onOpenChange={() => {
+              setOpenDetailsDialog(false);
+              dispatch(resetOrderDetails());
+            }}
+          >
+            <AdminOrderDetailsView
+              orderDetails={orderDetails}
+              page={page}
+              limit={limit}
+            />
+          </Drawer>
+        )}
       </CardContent>
     </Card>
   );

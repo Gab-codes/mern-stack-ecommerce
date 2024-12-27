@@ -58,10 +58,10 @@ function AdminProducts() {
 
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
-
   function onSubmit(event) {
     event.preventDefault();
-    const imagesToSubmit = uploadedImageUrls;
+    const imagesToSubmit =
+      uploadedImageUrls.length > 0 ? uploadedImageUrls : formData.images;
     const submissionData = { ...formData, images: imagesToSubmit };
 
     if (currentEditedId !== null) {
@@ -129,7 +129,12 @@ function AdminProducts() {
         (key) =>
           key !== "averageReview" && key !== "images" && key !== "salePrice"
       )
-      .every((key) => formData[key].trim() !== "");
+      .every((key) => {
+        if (typeof formData[key] === "string") {
+          return formData[key].trim() !== "";
+        }
+        return true;
+      });
   }
 
   return (
