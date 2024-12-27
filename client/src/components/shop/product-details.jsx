@@ -273,8 +273,8 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   return (
     <Drawer open={open} onOpenChange={handleDialogClose}>
-      <DrawerContent>
-        <div className="grid grid-cols-1 gap-6 max-h-[92vh] overflow-y-auto p-4 w-full">
+      <DrawerContent className="max-h-[92vh]">
+        <div className="grid grid-cols-1 gap-6 max-h-[89vh] overflow-y-auto p-4 w-full">
           {Content}
         </div>
       </DrawerContent>

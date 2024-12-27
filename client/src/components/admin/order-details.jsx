@@ -200,8 +200,10 @@ function AdminOrderDetailsView({ orderDetails }) {
   }
 
   return (
-    <DrawerContent>
-      <div className="max-h-[92vh] overflow-y-auto p-4 pb-11">{content}</div>
+    <DrawerContent className="max-h-[92vh]">
+      <div className="grid grid-cols-1 gap-6 max-h-[89vh] overflow-y-auto p-4 w-full">
+        {content}
+      </div>
     </DrawerContent>
   );
 }
